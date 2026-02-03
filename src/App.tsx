@@ -1,7 +1,8 @@
 export default function App() {
   return (
     <main>
-      <h1>React + TypeScript 🚀</h1>
+      <h1>TypeShit</h1>
+      <p>TODO-App</p>
     </main>
   );
 }
