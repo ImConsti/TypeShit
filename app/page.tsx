@@ -1,4 +1,6 @@
 import Image from "next/image";
+import NextLogo from "../public/next.svg";
+import VercelLogo from "../public/vercel.svg";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -7,7 +9,7 @@ export default function Home() {
       <main className={styles.main}>
         <Image
           className={styles.logo}
-          src="../public/next.svg"
+          src={NextLogo}
           alt="Next.js logo"
           width={100}
           height={20}
@@ -44,7 +46,7 @@ export default function Home() {
           >
             <Image
               className={styles.logo}
-              src="../public//vercel.svg"
+              src={VercelLogo}
               alt="Vercel logomark"
               width={16}
               height={16}
