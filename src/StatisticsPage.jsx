@@ -2,8 +2,8 @@ import React from "react";
 
 const defaultStats = {
   user: {
-    name: "Marco D'Aquila",
-    email: "marcodaquila2004@gmail.com",
+    name: "Michael Lippert",
+    email: "michigen5@gmail.com",
     weekday: "Friday",
     date: "30/01/2026",
   },
