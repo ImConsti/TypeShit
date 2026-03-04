@@ -1,11 +1,9 @@
-import React from "react";
-
 const defaultStats = {
   user: {
     name: "Michael Lippert",
     email: "michigen5@gmail.com",
-    weekday: "Friday",
-    date: "30/01/2026",
+    weekday: "Wednesday",
+    date: "March 4, 2026",
   },
   summary: {
     totalTasks: 84,
@@ -15,11 +13,11 @@ const defaultStats = {
     streakDays: 9,
   },
   openTasks: [
-    { title: "Prepare sprint review", priority: "High", due: "24.04.2024" },
-    { title: "Type safety cleanup", priority: "Medium", due: "27.04.2024" },
-    { title: "Refactor reminder module", priority: "Low", due: "30.04.2024" },
+    { title: "Prepare sprint review", priority: "High", due: "Mar 6, 2026" },
+    { title: "Type safety cleanup", priority: "Medium", due: "Mar 8, 2026" },
+    { title: "Refactor reminder module", priority: "Low", due: "Mar 10, 2026" },
   ],
-  importantTasks: ["Prepare sprint review", "Fix dashboard bugs", "Plan milestone release"],
+  importantTasks: ["Prepare sprint review", "Fix sync race condition", "Plan milestone release"],
   weeklyCompletion: [
     { day: "Mon", done: 6, total: 8 },
     { day: "Tue", done: 7, total: 9 },
@@ -32,302 +30,246 @@ const defaultStats = {
 };
 
 const pageStyles = `
-.stats-layout {
-  --bg: #ebebeb;
-  --panel: #f4f4f4;
-  --sidebar: #ff575c;
-  --sidebar-light: #ff8588;
-  --topbar: #e7dece;
-  --text: #1f1f1f;
-  --muted: #666;
-  --border: #d2d2d2;
-  --ok: #15b86d;
-  --danger: #ff2e35;
-  --accent: #ff575c;
-  --font: "Poppins", "Segoe UI", "Trebuchet MS", sans-serif;
+.statistics-page {
+  --bg: #ece9e3;
+  --panel: #f7f4ef;
+  --accent: #d9534f;
+  --accent-soft: #f09a8e;
+  --text: #23211f;
+  --muted: #6b6863;
+  --border: #d8d1c6;
+  --ok: #0fa56f;
+  --warn: #e49a2d;
 
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid #e0e0e0;
   min-height: 100vh;
-}
-
-.stats-topbar {
-  background: var(--topbar);
-  border-bottom: 1px solid #e2d7c4;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.8rem 1.4rem;
-}
-
-.stats-topbar h1 {
-  margin: 0;
-  font-size: 2rem;
-  line-height: 1;
-}
-
-.stats-search {
-  flex: 1;
-  border: none;
-  height: 2rem;
-  border-radius: 999px;
-  background: #f4f2ec;
-  padding: 0 1rem;
-  font-size: 1.1rem;
-  color: #8d8d8d;
-}
-
-.stats-icons {
-  display: flex;
-  gap: 0.45rem;
-}
-
-.stats-icon {
-  width: 1.6rem;
-  height: 1.6rem;
-  border-radius: 8px;
-  background: var(--accent);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.stats-day {
-  text-align: right;
-  line-height: 1.2;
-  min-width: 80px;
-}
-
-.stats-day strong {
-  font-size: 1.5rem;
-}
-
-.stats-day span {
-  display: block;
-  color: var(--accent);
-  font-weight: 600;
-  margin-top: 0.1rem;
-}
-
-.stats-shell {
-  display: grid;
-  grid-template-columns: 235px 1fr;
-  min-height: calc(100vh - 66px);
-}
-
-.stats-sidebar {
-  background: linear-gradient(180deg, var(--sidebar) 0%, #ff5256 100%);
-  color: #fff;
-  padding: 1.35rem 1rem;
-}
-
-.stats-avatar {
-  width: 95px;
-  height: 95px;
-  border-radius: 999px;
-  margin: 0 auto 0.95rem;
-  background: radial-gradient(circle at 45% 35%, #cfecfb 0%, #a7d9f3 35%, #8db4d8 100%);
-  border: 5px solid rgba(255, 255, 255, 0.35);
-}
-
-.stats-user {
-  text-align: center;
-  margin-bottom: 1.2rem;
-}
-
-.stats-user h2 {
-  margin: 0;
-  font-size: 1.35rem;
-}
-
-.stats-user p {
-  margin: 0.3rem 0 0;
-  font-size: 0.8rem;
-  opacity: 0.95;
-}
-
-.stats-nav {
-  display: grid;
-  gap: 0.8rem;
-}
-
-.stats-nav button {
-  border: 0;
-  border-radius: 10px;
-  padding: 0.7rem 0.85rem;
-  background: rgba(255, 255, 255, 0.42);
-  color: #fff;
-  font-family: var(--font);
-  text-align: left;
-  font-size: 1.1rem;
-  cursor: default;
-}
-
-.stats-nav button.active {
-  background: #fff;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.stats-main {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(217, 88, 83, 0.16) 0, transparent 36%),
+    radial-gradient(circle at 82% 6%, rgba(15, 165, 111, 0.12) 0, transparent 34%),
+    var(--bg);
+  color: var(--text);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   padding: 1.5rem;
 }
 
-.stats-main h3 {
-  margin: 0 0 1.1rem;
-  font-size: 2.2rem;
+.statistics-shell {
+  max-width: 1120px;
+  margin: 0 auto;
 }
 
-.stats-board {
-  border: 4px solid #d0d0d0;
-  background: #ededed;
-  padding: 1.1rem;
-  display: grid;
-  grid-template-columns: 1.2fr 0.95fr;
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 1rem;
+  padding: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(247, 244, 239, 0.92);
+  box-shadow: 0 16px 32px rgba(54, 45, 39, 0.08);
 }
 
-.stats-card {
-  background: var(--panel);
-  border: 1px solid #d8d8d8;
-  border-radius: 12px;
-  padding: 1rem;
-  animation: card-in 0.45s ease both;
+.stats-header h1 {
+  margin: 0.2rem 0 0;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1;
 }
 
-.stats-card h4 {
-  margin: 0 0 0.7rem;
-  color: var(--accent);
-  font-size: 1.95rem;
-  font-weight: 500;
+.stats-header p {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.98rem;
 }
 
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(90px, 1fr));
-  gap: 0.55rem;
-  margin-bottom: 0.8rem;
+.eyebrow {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(90deg, var(--accent) 0%, #e16f65 100%);
 }
 
-.metric-item {
+.date-pill {
+  min-width: 220px;
+  text-align: right;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.45rem 0.55rem;
+  border-radius: 14px;
+  padding: 0.75rem 0.95rem;
 }
 
-.metric-item p {
-  margin: 0;
-  font-size: 0.76rem;
+.date-pill span {
+  display: block;
+  font-size: 0.85rem;
   color: var(--muted);
 }
 
-.metric-item strong {
-  font-size: 1.2rem;
+.date-pill strong {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 1.05rem;
+}
+
+.summary-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.metric-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  padding: 0.85rem;
+}
+
+.metric-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 1.75rem;
+}
+
+.metric-card.emphasis {
+  background: linear-gradient(120deg, #d9534f 0%, #ec756a 100%);
+  color: #fff;
+  border-color: #da6d64;
+}
+
+.metric-card.emphasis p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.board-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 0.95rem;
+}
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  padding: 1rem;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.05);
+}
+
+.panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
 }
 
 .stats-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 0.94rem;
 }
 
 .stats-table th,
 .stats-table td {
   border: 1px solid var(--border);
-  padding: 0.45rem;
+  padding: 0.5rem;
   text-align: left;
 }
 
 .stats-table th {
-  background: #f0f0f0;
-  font-weight: 600;
+  background: #efe8de;
 }
 
 .badge {
-  display: inline-block;
-  border-radius: 7px;
-  padding: 0.12rem 0.42rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.14rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .badge.high {
   color: #fff;
-  background: #d05d48;
+  background: #c5463f;
 }
 
 .badge.medium {
-  color: #6f5400;
-  background: #f3d36d;
+  color: #6a4600;
+  background: #f0cf71;
 }
 
 .badge.low {
-  color: #3e6950;
-  background: #a6d9bf;
+  color: #23583c;
+  background: #b7dec6;
 }
 
-.status-wrap {
+.status-bars {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
-.ring-box {
-  text-align: center;
-}
-
-.ring {
-  --percent: 50;
-  --ring-color: #000;
-  width: 118px;
-  aspect-ratio: 1;
-  margin: 0 auto 0.45rem;
-  border-radius: 50%;
-  background: conic-gradient(var(--ring-color) calc(var(--percent) * 1%), #d8d8d8 0);
+.status-row {
   display: grid;
-  place-items: center;
+  gap: 0.35rem;
 }
 
-.ring::before {
-  content: "";
-  width: 72px;
-  aspect-ratio: 1;
-  background: var(--panel);
-  border-radius: 50%;
+.status-row label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.9rem;
 }
 
-.ring-value {
-  margin-top: -73px;
-  font-size: 2rem;
-  font-weight: 600;
+.status-track {
+  height: 12px;
+  border-radius: 999px;
+  background: #ddd5ca;
+  overflow: hidden;
 }
 
-.ring-box p {
-  margin: 0.5rem 0 0;
-  font-size: 1.95rem;
+.status-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.status-fill.ok {
+  background: linear-gradient(90deg, #10a86f 0%, #36c289 100%);
+}
+
+.status-fill.danger {
+  background: linear-gradient(90deg, #d9534f 0%, #ea7d72 100%);
+}
+
+.status-fill.warn {
+  background: linear-gradient(90deg, #db9124 0%, #f2b352 100%);
 }
 
 .important-list {
   margin: 0;
-  padding-left: 1.25rem;
-  font-size: 1.7rem;
-  line-height: 1.55;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.35rem;
 }
 
-.week-card {
-  margin-top: 1rem;
+.important-list li {
+  color: #352f2a;
 }
 
 .week-row {
   display: grid;
-  grid-template-columns: 55px 1fr 44px;
+  grid-template-columns: 42px 1fr 50px;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.45rem;
+  gap: 0.45rem;
+  margin-bottom: 0.55rem;
 }
 
 .week-row span {
@@ -337,78 +279,41 @@ const pageStyles = `
 .week-track {
   height: 10px;
   border-radius: 999px;
-  background: #d9d9d9;
+  background: #ddd5ca;
   overflow: hidden;
 }
 
 .week-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ff8185 0%, var(--accent) 100%);
+  background: linear-gradient(90deg, var(--accent-soft) 0%, var(--accent) 100%);
 }
 
-@keyframes card-in {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
+@media (max-width: 980px) {
+  .summary-grid {
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
 
-@media (max-width: 1080px) {
-  .stats-board {
+  .board-grid {
     grid-template-columns: 1fr;
   }
-
-  .metrics {
-    grid-template-columns: repeat(3, minmax(90px, 1fr));
-  }
 }
 
-@media (max-width: 860px) {
-  .stats-shell {
-    grid-template-columns: 1fr;
+@media (max-width: 700px) {
+  .statistics-page {
+    padding: 1rem;
   }
 
-  .stats-sidebar {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  .stats-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .stats-nav {
-    grid-template-columns: repeat(3, minmax(130px, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .stats-topbar {
-    flex-wrap: wrap;
-  }
-
-  .stats-day {
-    min-width: unset;
+  .date-pill {
     text-align: left;
   }
 
-  .metrics {
-    grid-template-columns: repeat(2, minmax(90px, 1fr));
-  }
-
-  .status-wrap {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-card h4 {
-    font-size: 1.45rem;
-  }
-
-  .ring-box p {
-    font-size: 1.4rem;
-  }
-
-  .important-list {
-    font-size: 1.2rem;
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
   }
 }
 `;
@@ -418,24 +323,9 @@ function asPercent(done, total) {
   return Math.round((done / total) * 100);
 }
 
-function RingStat({ label, percent, color }) {
-  return (
-    <article className="ring-box">
-      <div
-        className="ring"
-        style={{
-          "--percent": percent,
-          "--ring-color": color,
-        }}
-      />
-      <div className="ring-value">{percent}%</div>
-      <p>{label}</p>
-    </article>
-  );
-}
-
 function WeeklyRow({ day, done, total }) {
   const percent = asPercent(done, total);
+
   return (
     <div className="week-row">
       <span>{day}</span>
@@ -447,126 +337,117 @@ function WeeklyRow({ day, done, total }) {
   );
 }
 
+function StatusRow({ label, value, colorClass }) {
+  return (
+    <div className="status-row">
+      <label>
+        <span>{label}</span>
+        <strong>{value}%</strong>
+      </label>
+      <div className="status-track">
+        <div className={`status-fill ${colorClass}`} style={{ width: `${value}%` }} />
+      </div>
+    </div>
+  );
+}
+
 export default function StatisticsPage({ stats = defaultStats }) {
   const finishedPercent = asPercent(stats.summary.finished, stats.summary.totalTasks);
   const inProgressPercent = asPercent(stats.summary.inProgress, stats.summary.totalTasks);
+  const importantPercent = asPercent(stats.summary.important, stats.summary.totalTasks);
 
   return (
-    <div className="stats-layout">
+    <div className="statistics-page">
       <style>{pageStyles}</style>
 
-      <header className="stats-topbar">
-        <h1>Dashboard</h1>
-        <input className="stats-search" value="" readOnly placeholder="Search your tasks here..." />
-        <div className="stats-icons">
-          <span className="stats-icon">Q</span>
-          <span className="stats-icon">+</span>
-          <span className="stats-icon">C</span>
-        </div>
-        <div className="stats-day">
-          <strong>{stats.user.weekday}</strong>
-          <span>{stats.user.date}</span>
-        </div>
-      </header>
-
-      <div className="stats-shell">
-        <aside className="stats-sidebar">
-          <div className="stats-avatar" />
-          <div className="stats-user">
-            <h2>{stats.user.name}</h2>
-            <p>{stats.user.email}</p>
+      <div className="statistics-shell">
+        <header className="stats-header">
+          <div>
+            <span className="eyebrow">Task Analytics</span>
+            <h1>Statistics</h1>
+            <p>Quick view of throughput, active workload, and completion momentum.</p>
           </div>
 
-          <nav className="stats-nav">
-            <button type="button">Dashboard</button>
-            <button type="button">Important Tasks</button>
-            <button type="button">My Tasks</button>
-            <button type="button" className="active">
-              Stats
-            </button>
-            <button type="button">Settings</button>
-            <button type="button">Info</button>
-          </nav>
-        </aside>
+          <aside className="date-pill">
+            <span>{stats.user.weekday}</span>
+            <strong>{stats.user.date}</strong>
+            <span>{stats.user.name}</span>
+          </aside>
+        </header>
 
-        <main className="stats-main">
-          <h3>Statistics Overview</h3>
+        <section className="summary-grid" aria-label="Summary Metrics">
+          <article className="metric-card">
+            <p>Total Tasks</p>
+            <strong>{stats.summary.totalTasks}</strong>
+          </article>
+          <article className="metric-card">
+            <p>Finished</p>
+            <strong>{stats.summary.finished}</strong>
+          </article>
+          <article className="metric-card">
+            <p>In Progress</p>
+            <strong>{stats.summary.inProgress}</strong>
+          </article>
+          <article className="metric-card">
+            <p>Important</p>
+            <strong>{stats.summary.important}</strong>
+          </article>
+          <article className="metric-card emphasis">
+            <p>Streak Days</p>
+            <strong>{stats.summary.streakDays}</strong>
+          </article>
+        </section>
 
-          <section className="stats-board">
-            <article className="stats-card">
-              <h4>Task Metrics</h4>
-              <div className="metrics">
-                <div className="metric-item">
-                  <p>Total</p>
-                  <strong>{stats.summary.totalTasks}</strong>
-                </div>
-                <div className="metric-item">
-                  <p>Finished</p>
-                  <strong>{stats.summary.finished}</strong>
-                </div>
-                <div className="metric-item">
-                  <p>In Progress</p>
-                  <strong>{stats.summary.inProgress}</strong>
-                </div>
-                <div className="metric-item">
-                  <p>Important</p>
-                  <strong>{stats.summary.important}</strong>
-                </div>
-                <div className="metric-item">
-                  <p>Streak</p>
-                  <strong>{stats.summary.streakDays}d</strong>
-                </div>
-              </div>
-
-              <table className="stats-table">
-                <thead>
-                  <tr>
-                    <th>Task</th>
-                    <th>Priority</th>
-                    <th>Due</th>
+        <section className="board-grid">
+          <article className="panel">
+            <h2>Open Tasks</h2>
+            <table className="stats-table">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Priority</th>
+                  <th>Due</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stats.openTasks.map((task) => (
+                  <tr key={task.title}>
+                    <td>{task.title}</td>
+                    <td>
+                      <span className={`badge ${task.priority.toLowerCase()}`}>{task.priority}</span>
+                    </td>
+                    <td>{task.due}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {stats.openTasks.map((item) => (
-                    <tr key={item.title}>
-                      <td>{item.title}</td>
-                      <td>
-                        <span className={`badge ${item.priority.toLowerCase()}`}>{item.priority}</span>
-                      </td>
-                      <td>{item.due}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </article>
+                ))}
+              </tbody>
+            </table>
+          </article>
 
-            <div>
-              <article className="stats-card">
-                <h4>Status</h4>
-                <div className="status-wrap">
-                  <RingStat label="Finished" percent={finishedPercent} color="#16b56e" />
-                  <RingStat label="In Progress" percent={inProgressPercent} color="#ff3238" />
-                </div>
-              </article>
-
-              <article className="stats-card" style={{ marginTop: "1rem" }}>
-                <h4>Important Tasks</h4>
-                <ul className="important-list">
-                  {stats.importantTasks.map((task) => (
-                    <li key={task}>{task}</li>
-                  ))}
-                </ul>
-              </article>
+          <article className="panel">
+            <h2>Status Breakdown</h2>
+            <div className="status-bars">
+              <StatusRow label="Finished" value={finishedPercent} colorClass="ok" />
+              <StatusRow label="In Progress" value={inProgressPercent} colorClass="danger" />
+              <StatusRow label="Important" value={importantPercent} colorClass="warn" />
             </div>
-          </section>
+          </article>
 
-          <article className="stats-card week-card">
-            <h4>Weekly Completion</h4>
+          <article className="panel">
+            <h2>Important Tasks</h2>
+            <ul className="important-list">
+              {stats.importantTasks.map((task) => (
+                <li key={task}>{task}</li>
+              ))}
+            </ul>
+          </article>
+
+          <article className="panel">
+            <h2>Weekly Completion</h2>
             {stats.weeklyCompletion.map((item) => (
               <WeeklyRow key={item.day} day={item.day} done={item.done} total={item.total} />
             ))}
           </article>
-        </main>
+        </section>
       </div>
     </div>
   );
