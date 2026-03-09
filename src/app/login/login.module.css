@@ -1,0 +1,89 @@
+.authContainer {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: var(--spacing-lg);
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.authContainer h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-main);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--spacing-md);
+}
+
+.formGroup label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-muted);
+}
+
+.formControl {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.formControl:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.2);
+}
+
+.btnPrimary {
+  background-color: var(--primary-color);
+  color: var(--surface-color);
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.btnPrimary:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
+}
+
+.links {
+  text-align: center;
+  margin-top: var(--spacing-md);
+  font-size: 0.85rem;
+}
+
+.links a {
+  color: var(--primary-color);
+  text-decoration: none;
+  display: inline-block;
+  margin-top: var(--spacing-sm);
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+.errorMessage {
+  background-color: #ffe6e6;
+  border: 1px solid #ff9999;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+}
