@@ -452,6 +452,3 @@ export default function StatisticsPage({ stats = defaultStats }) {
     </div>
   );
 }
-
-
-//APPROVED
