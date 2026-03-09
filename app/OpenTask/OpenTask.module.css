@@ -1,0 +1,244 @@
+.card {
+    border: 2px solid #b8b8b8;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    background: #fff;
+}
+
+.cardHeader {
+    background: #f1f1f1;
+    border-bottom: 2px solid #b8b8b8;
+    padding: 10px 12px;
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cardTitle {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.count {
+    font-weight: 600;
+    color: #374151;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selectWrap {
+    display: inline-flex;
+    align-items: center;
+}
+
+.select {
+    height: 34px;
+    padding: 0 34px 0 12px;
+    border-radius: 10px;
+    border: 2px solid #b8b8b8;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #111 50%),
+    linear-gradient(135deg, #111 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+    background-position: calc(100% - 18px) 13px, calc(100% - 12px) 13px, 0 0;
+    background-size: 6px 6px, 6px 6px, 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.collapseBtn {
+    height: 34px;
+    width: 34px;
+    border-radius: 10px;
+    border: 2px solid #b8b8b8;
+    background: #fff;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.tableWrap {
+    background: #fff;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    padding: 10px 12px;
+    border-bottom: 2px solid #b8b8b8;
+    background: #f7f7f7;
+}
+
+.table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #d7d7d7;
+    vertical-align: middle;
+    background: #fff;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.colPin {
+    width: 44px;
+}
+.colTask {
+    width: 32%;
+}
+.colDesc {
+    width: 34%;
+}
+.colPrio {
+    width: 140px;
+}
+.colDue {
+    width: 140px;
+}
+.colDoneAt {
+    width: 190px;
+}
+.colActions {
+    width: 150px;
+}
+
+.pinCell {
+    text-align: center;
+}
+
+.pin {
+    font-size: 18px;
+    display: inline-block;
+    transform: rotate(-20deg);
+}
+
+.taskLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+}
+
+.taskText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.taskTitle {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.strike {
+    text-decoration: line-through;
+    color: #6b7280;
+}
+
+.desc {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.date {
+    font-variant-numeric: tabular-nums;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 10px;
+    font-weight: 800;
+    border: 2px solid rgba(0, 0, 0, 0.15);
+}
+
+.badgeHigh {
+    background: #b5544f;
+    color: #fff;
+}
+
+.badgeMedium {
+    background: #f0c55d;
+    color: #1f2937;
+}
+
+.badgeLow {
+    background: #cfe6d3;
+    color: #1f2937;
+}
+
+.actionsCell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.iconBtn {
+    height: 34px;
+    width: 40px;
+    border-radius: 8px;
+    border: 2px solid #b8b8b8;
+    background: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.okBtn {
+    background: #49a65c;
+    border-color: #3c914d;
+    color: #fff;
+}
+
+.editBtn {
+    background: #f3d07b;
+    border-color: #d7b35e;
+}
+
+.trashBtn {
+    background: #fff;
+}
+
+.emptyRow {
+    padding: 16px 12px;
+    color: #6b7280;
+    text-align: center;
+}
+
+.footerHint {
+    padding: 10px 12px;
+    border-top: 2px solid #b8b8b8;
+    background: #fff;
+    color: #6b7280;
+    text-align: center;
+    font-size: 14px;
+}
