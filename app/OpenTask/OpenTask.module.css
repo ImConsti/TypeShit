@@ -74,53 +74,74 @@
     background: #fff;
 }
 
+/* Geändert von Marco: Fixed Layout sorgt dafür, dass die Spaltenbreiten exakt eingehalten werden */
 .table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
+    table-layout: fixed; 
 }
 
+/* Geändert von Marco: Zeilenumbruch im Header erlaubt, falls dieser zu lang wird */
 .table thead th {
     text-align: left;
-    font-size: 14px;
-    font-weight: 700;
-    color: #374151;
-    padding: 10px 12px;
-    border-bottom: 2px solid #b8b8b8;
-    background: #f7f7f7;
-}
-
-.table tbody td {
     padding: 12px;
-    border-bottom: 1px solid #d7d7d7;
-    vertical-align: middle;
-    background: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    color: #1f2937;
+    border-bottom: 2px solid #d7d7d7;
+    background: #f7f7f7;
+    white-space: normal; 
+    word-break: break-word;
 }
 
-.table tbody tr:last-child td {
+/* Geändert von Marco: Spezifisches Header-Padding, damit Text exakt unter der Überschrift startet */
+.table thead th.colTask {
+    padding-left: 40px;
+}
+
+.table thead th.colPrio {
+    padding-left: 20px;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #d7d7d7;
+}
+
+.table tbody tr:last-child {
     border-bottom: none;
+}
+
+/* Geändert von Marco: Erlaubt Zeilenumbrüche auch bei extrem langen Wörtern */
+.table tbody td {
+    padding: 14px 12px; 
+    vertical-align: middle;
+    text-align: left; 
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .colPin {
     width: 44px;
 }
+
 .colTask {
-    width: 32%;
+    width: 30%;
 }
+
 .colDesc {
-    width: 34%;
+    width: 35%;
 }
+
 .colPrio {
-    width: 140px;
+    width: 120px;
 }
+
 .colDue {
-    width: 140px;
+    width: 130px;
 }
-.colDoneAt {
-    width: 190px;
-}
+
 .colActions {
-    width: 150px;
+    width: 140px;
 }
 
 .pinCell {
@@ -131,39 +152,43 @@
     font-size: 18px;
     display: inline-block;
     transform: rotate(-20deg);
+    vertical-align: middle; 
 }
 
 .taskLabel {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 30px; 
+    line-height: 1.4; 
+    width: 100%;
 }
 
 .checkbox {
     width: 18px;
     height: 18px;
     border-radius: 4px;
+    margin-left: -20px; 
+    flex-shrink: 0;
 }
 
 .taskText {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    width: 100%;
 }
 
 .taskTitle {
     font-weight: 700;
     font-size: 16px;
-}
-
-.strike {
-    text-decoration: line-through;
-    color: #6b7280;
+    margin: 0;
+    white-space: normal;
 }
 
 .desc {
-    color: #6b7280;
-    font-size: 14px;
+    color: #000;
+    font-size: 15px;
+    white-space: normal;
 }
 
 .date {
@@ -173,17 +198,20 @@
 .badge {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; 
     height: 30px;
-    padding: 0 14px;
     border-radius: 10px;
     font-weight: 800;
     border: 2px solid rgba(0, 0, 0, 0.15);
+    vertical-align: middle; 
+    width: 100px;
+    padding-left: 8px;
+    white-space: nowrap; 
 }
 
 .badgeHigh {
     background: #b5544f;
-    color: #fff;
+    color: #1f2937;
 }
 
 .badgeMedium {
@@ -199,7 +227,8 @@
 .actionsCell {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center; 
+    gap: 8px;
 }
 
 .iconBtn {
@@ -211,6 +240,15 @@
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
+    transition: transform 0.1s ease; 
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconBtn:active {
+    transform: scale(0.95); 
 }
 
 .okBtn {
@@ -222,10 +260,6 @@
 .editBtn {
     background: #f3d07b;
     border-color: #d7b35e;
-}
-
-.trashBtn {
-    background: #fff;
 }
 
 .emptyRow {

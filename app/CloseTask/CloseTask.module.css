@@ -1,10 +1,3 @@
-.page {
-    padding: 18px;
-    background: #ffffff;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    color: #1f2937;
-}
-
 .card {
     border: 2px solid #b8b8b8;
     border-radius: 10px;
@@ -81,27 +74,34 @@
     background: #fff;
 }
 
-. {
+/* Geändert von Marco: Fehler behoben, table-layout auf fixed für Stabilität */
+.table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
+    table-layout: fixed; 
 }
 
+/* Geändert von Marco: Umbrüche im Header erlaubt und Standard-Padding */
 .table thead th {
     text-align: left;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 800;
     color: #374151;
-    padding: 10px 12px;
-    border-bottom: 2px solid #b8b8b8;
+    padding: 12px; 
+    border-bottom: 2px solid #d7d7d7;
     background: #f7f7f7;
+    white-space: normal;
+    word-break: break-word;
 }
 
+/* Geändert von Marco: Schutz gegen Überlaufen bei langen Wörtern */
 .table tbody td {
-    padding: 12px;
+    padding: 14px 12px;
     border-bottom: 1px solid #d7d7d7;
     vertical-align: middle;
     background: #fff;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .table tbody tr:last-child td {
@@ -111,21 +111,19 @@
 .colPin {
     width: 44px;
 }
+
 .colTask {
     width: 32%;
 }
+
 .colDesc {
     width: 34%;
 }
-.colPrio {
-    width: 140px;
-}
-.colDue {
-    width: 140px;
-}
+
 .colDoneAt {
     width: 190px;
 }
+
 .colActions {
     width: 150px;
 }
@@ -138,18 +136,7 @@
     font-size: 18px;
     display: inline-block;
     transform: rotate(-20deg);
-}
-
-.taskLabel {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.checkbox {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
+    vertical-align: middle; 
 }
 
 .taskText {
@@ -161,6 +148,7 @@
 .taskTitle {
     font-weight: 700;
     font-size: 16px;
+    white-space: normal;
 }
 
 .strike {
@@ -168,45 +156,21 @@
     color: #6b7280;
 }
 
-.descd {
-    color: #6b7280;
-    font-size: 14px;
+.desc {
+    color: #000;
+    font-size: 15px;
+    white-space: normal;
 }
 
 .date {
     font-variant-numeric: tabular-nums;
 }
 
-.badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 30px;
-    padding: 0 14px;
-    border-radius: 10px;
-    font-weight: 800;
-    border: 2px solid rgba(0, 0, 0, 0.15);
-}
-
-.badgeHigh {
-    background: #b5544f;
-    color: #fff;
-}
-
-.badgeMedium {
-    background: #f0c55d;
-    color: #1f2937;
-}
-
-.badgeLow {
-    background: #cfe6d3;
-    color: #1f2937;
-}
-
 .actionsCell {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: 8px;
 }
 
 .iconBtn {
@@ -218,15 +182,36 @@
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease;
 }
 
-.editBtn {
-    background: #f3d07b;
-    border-color: #d7b35e;
+.iconBtn:active {
+    transform: scale(0.95);
 }
 
+/* Geändert von Marco: Restore-Button Sichtbarkeit gefixt */
+.restoreBtn {
+    background: #007bff; 
+    border-color: #0056b3;
+    color: #ffffff;
+}
+
+/* Geändert von Marco: Trash-Button Sichtbarkeit gefixt */
 .trashBtn {
-    background: #fff;
+    background: #dc3545; 
+    border-color: #bd2130;
+    color: #ffffff; 
+}
+
+.restoreBtn:hover {
+    background: #0056b3;
+}
+
+.trashBtn:hover {
+    background: #bd2130;
 }
 
 .emptyRow {
