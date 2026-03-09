@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./page.module.css";
-import TasksPanel from "@/app/TaskPanel/TasksPanel"; // Dein Import
+import TasksPanel from "@/src/app/TaskPanel/TasksPanel"; // Dein Import
 
 export default function Home() {
   return (

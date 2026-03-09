@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import styles from "./TasksPanel.module.css";
-import OpenTask, { OpenTaskItem } from "@/app/OpenTask/OpenTask";
-import CloseTask, { DoneTaskItem } from "@/app/CloseTask/CloseTask";
+import OpenTask, { OpenTaskItem } from "@/src/app/OpenTask/OpenTask";
+import CloseTask, { DoneTaskItem } from "@/src/app/CloseTask/CloseTask";
 import TaskInput from "./TaskInput";
 
 export type Task = OpenTaskItem & {
