@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styles from './StatisticsPage.module.css';
 
 const defaultStats = {
@@ -72,6 +73,13 @@ export default function StatisticsPage({ stats = defaultStats }) {
   return (
     <div className={styles.statisticsPage}>
       <div className={styles.statisticsShell}>
+        
+        <div className={styles.navigationRow}>
+          <Link href="/" className={styles.backButton}>
+            &larr; Zurück zum Dashboard
+          </Link>
+        </div>
+
         <header className={styles.statsHeader}>
           <div>
             <span className={styles.eyebrow}>Task Analytics</span>

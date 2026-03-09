@@ -1,22 +1,29 @@
 .card {
-    background-color: #fff;
-    border: 2px solid #b8b8b8; 
-    border-radius: 10px;
-    margin-bottom: 20px;
-    overflow: visible; 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-md);
+    overflow: visible;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .cardHeader {
-    background-color: #f1f1f1;
-    padding: 12px 18px;
-    border-bottom: 2px solid #b8b8b8;
+    background-color: var(--background-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cardTitle {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
 }
 
 .inputGroup {
     display: flex;
-    gap: 12px;
-    padding: 20px 20px 30px 20px; 
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
     align-items: center;
     flex-wrap: nowrap;
 }
@@ -36,80 +43,75 @@
 }
 
 .inputField {
-    width: 100%; 
-    padding: 10px 14px; 
-    border: 2px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 15px;
-    background-color: #f9fafb; 
-    color: #1f2937;
-    height: 44px; 
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: var(--surface-color);
+    color: var(--text-main);
+    height: 44px;
     transition: all 0.2s ease-in-out;
-    color-scheme: light;
 }
 
 .inputField:focus {
     outline: none;
-    border-color: #002b5e; 
-    background-color: #fff;
-    box-shadow: 0 0 0 4px rgba(0, 43, 94, 0.1); 
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.15);
 }
 
 .counter {
     position: absolute;
-    bottom: -20px;
+    bottom: -18px;
     right: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    color: #6b7280;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
 }
 
 .warning {
-    color: #dc3545;
+    color: var(--danger-color);
 }
 
 .prioritySelect {
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23002b5e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 4.86l-4.796 5.482C1.885 10.987 2.345 12 3.204 12h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 4.86l-4.796 5.482C1.885 10.987 2.345 12 3.204 12h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: calc(100% - 15px) 50%; 
-    padding-right: 35px;
-    min-width: 120px;
+    background-position: calc(100% - 12px) 50%;
+    padding-right: 30px;
+    min-width: 110px;
     flex: 1;
-    transition: background-color 0.2s ease, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .prioritySelect:hover,
 .prioritySelect:focus {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23002b5e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14l-4.796-5.482C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    outline: none;
-    border-color: #002b5e; 
-    background-color: #fff;
-    box-shadow: 0 0 0 4px rgba(0, 43, 94, 0.1);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%230070f3' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14l-4.796-5.482C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    border-color: var(--primary-color);
 }
 
-.dateInput { 
+.dateInput {
     flex: 1.2;
-    min-width: 150px; 
+    min-width: 140px;
     cursor: pointer;
 }
 
 .submitBtn {
     height: 44px;
-    padding: 0 22px;
+    padding: 0 1.5rem;
     cursor: pointer;
-    background-color: #002b5e; 
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--surface-color);
     border: none;
-    border-radius: 8px;
-    font-weight: 700;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
     transition: all 0.2s ease;
 }
 
 .submitBtn:hover {
-    background-color: #001a3a;
+    background-color: var(--primary-hover);
     transform: translateY(-1px);
 }
 
@@ -118,6 +120,11 @@
 }
 
 .inputField::-webkit-calendar-picker-indicator {
-    cursor: pointer; 
-    filter: invert(0) brightness(0); 
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.inputField:hover::-webkit-calendar-picker-indicator {
+    opacity: 1;
 }

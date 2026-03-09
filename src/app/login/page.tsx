@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/src/app/contexts/AuthContext';
+import { useAuth } from '@/src/contexts/AuthContext';
 import styles from './login.module.css';
 
 export default function LoginPage() {

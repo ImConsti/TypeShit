@@ -1,39 +1,41 @@
 .card {
-    border: 2px solid #b8b8b8;
-    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
     overflow: hidden;
-    margin-bottom: 18px;
-    background: #fff;
+    margin-bottom: var(--spacing-md);
+    background: var(--surface-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .cardHeader {
-    background: #f1f1f1;
-    border-bottom: 2px solid #b8b8b8;
-    padding: 10px 12px;
+    background: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-sm) var(--spacing-md);
 }
 
 .titleRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--spacing-md);
 }
 
 .cardTitle {
     margin: 0;
-    font-size: 22px;
+    font-size: 1.25rem;
     font-weight: 700;
+    color: var(--text-main);
 }
 
 .count {
     font-weight: 600;
-    color: #374151;
+    color: var(--text-muted);
 }
 
 .headerRight {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--spacing-sm);
 }
 
 .selectWrap {
@@ -44,15 +46,15 @@
 .select {
     height: 34px;
     padding: 0 34px 0 12px;
-    border-radius: 10px;
-    border: 2px solid #b8b8b8;
-    background: #fff;
-    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-main);
     appearance: none;
-    background-image: linear-gradient(45deg, transparent 50%, #111 50%),
-    linear-gradient(135deg, #111 50%, transparent 50%),
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-main) 50%),
+    linear-gradient(135deg, var(--text-main) 50%, transparent 50%),
     linear-gradient(to right, transparent, transparent);
     background-position: calc(100% - 18px) 13px, calc(100% - 12px) 13px, 0 0;
     background-size: 6px 6px, 6px 6px, 100% 100%;
@@ -62,39 +64,40 @@
 .collapseBtn {
     height: 34px;
     width: 34px;
-    border-radius: 10px;
-    border: 2px solid #b8b8b8;
-    background: #fff;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-main);
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .tableWrap {
-    background: #fff;
+    background: var(--surface-color);
 }
 
-/* Geändert von Marco: Fixed Layout sorgt dafür, dass die Spaltenbreiten exakt eingehalten werden */
 .table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; 
 }
 
-/* Geändert von Marco: Zeilenumbruch im Header erlaubt, falls dieser zu lang wird */
 .table thead th {
     text-align: left;
-    padding: 12px;
-    font-size: 14px;
-    font-weight: 800;
-    color: #1f2937;
-    border-bottom: 2px solid #d7d7d7;
-    background: #f7f7f7;
+    padding: var(--spacing-md);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    border-bottom: 2px solid var(--border-color);
+    background: var(--background-color);
     white-space: normal; 
     word-break: break-word;
 }
 
-/* Geändert von Marco: Spezifisches Header-Padding, damit Text exakt unter der Überschrift startet */
 .table thead th.colTask {
     padding-left: 40px;
 }
@@ -104,52 +107,35 @@
 }
 
 .table tbody tr {
-    border-bottom: 1px solid #d7d7d7;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .table tbody tr:last-child {
     border-bottom: none;
 }
 
-/* Geändert von Marco: Erlaubt Zeilenumbrüche auch bei extrem langen Wörtern */
 .table tbody td {
-    padding: 14px 12px; 
+    padding: var(--spacing-md); 
     vertical-align: middle;
     text-align: left; 
     word-break: break-word;
     overflow-wrap: break-word;
+    color: var(--text-main);
 }
 
-.colPin {
-    width: 44px;
-}
-
-.colTask {
-    width: 30%;
-}
-
-.colDesc {
-    width: 35%;
-}
-
-.colPrio {
-    width: 120px;
-}
-
-.colDue {
-    width: 130px;
-}
-
-.colActions {
-    width: 140px;
-}
+.colPin { width: 44px; }
+.colTask { width: 30%; }
+.colDesc { width: 35%; }
+.colPrio { width: 120px; }
+.colDue { width: 130px; }
+.colActions { width: 140px; }
 
 .pinCell {
     text-align: center;
 }
 
 .pin {
-    font-size: 18px;
+    font-size: 1.1rem;
     display: inline-block;
     transform: rotate(-20deg);
     vertical-align: middle; 
@@ -158,7 +144,7 @@
 .taskLabel {
     display: flex;
     align-items: center;
-    gap: 30px; 
+    gap: var(--spacing-md); 
     line-height: 1.4; 
     width: 100%;
 }
@@ -169,6 +155,7 @@
     border-radius: 4px;
     margin-left: -20px; 
     flex-shrink: 0;
+    accent-color: var(--primary-color);
 }
 
 .taskText {
@@ -179,20 +166,21 @@
 }
 
 .taskTitle {
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 1rem;
     margin: 0;
     white-space: normal;
 }
 
 .desc {
-    color: #000;
-    font-size: 15px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
     white-space: normal;
 }
 
 .date {
     font-variant-numeric: tabular-nums;
+    font-size: 0.9rem;
 }
 
 .badge {
@@ -200,28 +188,28 @@
     align-items: center;
     justify-content: flex-start; 
     height: 30px;
-    border-radius: 10px;
-    font-weight: 800;
-    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.8rem;
     vertical-align: middle; 
-    width: 100px;
-    padding-left: 8px;
+    width: 90px;
+    padding-left: 12px;
     white-space: nowrap; 
 }
 
 .badgeHigh {
-    background: #b5544f;
-    color: #1f2937;
+    background: var(--danger-color);
+    color: white;
 }
 
 .badgeMedium {
-    background: #f0c55d;
-    color: #1f2937;
+    background: #f0cf71;
+    color: #6a4600;
 }
 
 .badgeLow {
-    background: #cfe6d3;
-    color: #1f2937;
+    background: #b7dec6;
+    color: #23583c;
 }
 
 .actionsCell {
@@ -233,18 +221,21 @@
 
 .iconBtn {
     height: 34px;
-    width: 40px;
-    border-radius: 8px;
-    border: 2px solid #b8b8b8;
-    background: #fff;
+    width: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-main);
     cursor: pointer;
-    font-size: 16px;
-    line-height: 1;
-    transition: transform 0.1s ease; 
+    transition: transform 0.1s ease, background-color 0.2s ease; 
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.iconBtn:hover {
+    background: var(--background-color);
 }
 
 .iconBtn:active {
@@ -252,27 +243,36 @@
 }
 
 .okBtn {
-    background: #49a65c;
-    border-color: #3c914d;
+    background: #10a86f;
+    border-color: #10a86f;
     color: #fff;
 }
 
+.okBtn:hover {
+    background: #0d8a5b;
+}
+
 .editBtn {
-    background: #f3d07b;
-    border-color: #d7b35e;
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.editBtn:hover {
+    background: var(--primary-hover);
 }
 
 .emptyRow {
-    padding: 16px 12px;
-    color: #6b7280;
+    padding: var(--spacing-lg) var(--spacing-md);
+    color: var(--text-muted);
     text-align: center;
 }
 
 .footerHint {
-    padding: 10px 12px;
-    border-top: 2px solid #b8b8b8;
-    background: #fff;
-    color: #6b7280;
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-muted);
     text-align: center;
-    font-size: 14px;
+    font-size: 0.9rem;
 }

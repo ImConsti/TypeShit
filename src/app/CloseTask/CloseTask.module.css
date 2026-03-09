@@ -1,39 +1,42 @@
 .card {
-    border: 2px solid #b8b8b8;
-    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
     overflow: hidden;
-    margin-bottom: 18px;
-    background: #fff;
+    margin-bottom: var(--spacing-md);
+    background: var(--surface-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    opacity: 0.85;
 }
 
 .cardHeader {
-    background: #f1f1f1;
-    border-bottom: 2px solid #b8b8b8;
-    padding: 10px 12px;
+    background: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-sm) var(--spacing-md);
 }
 
 .titleRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--spacing-md);
 }
 
 .cardTitle {
     margin: 0;
-    font-size: 22px;
+    font-size: 1.25rem;
     font-weight: 700;
+    color: var(--text-muted);
 }
 
 .count {
     font-weight: 600;
-    color: #374151;
+    color: var(--text-muted);
 }
 
 .headerRight {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--spacing-sm);
 }
 
 .selectWrap {
@@ -44,15 +47,15 @@
 .select {
     height: 34px;
     padding: 0 34px 0 12px;
-    border-radius: 10px;
-    border: 2px solid #b8b8b8;
-    background: #fff;
-    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-muted);
     appearance: none;
-    background-image: linear-gradient(45deg, transparent 50%, #111 50%),
-    linear-gradient(135deg, #111 50%, transparent 50%),
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%),
     linear-gradient(to right, transparent, transparent);
     background-position: calc(100% - 18px) 13px, calc(100% - 12px) 13px, 0 0;
     background-size: 6px 6px, 6px 6px, 100% 100%;
@@ -62,44 +65,45 @@
 .collapseBtn {
     height: 34px;
     width: 34px;
-    border-radius: 10px;
-    border: 2px solid #b8b8b8;
-    background: #fff;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-muted);
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .tableWrap {
-    background: #fff;
+    background: var(--surface-color);
 }
 
-/* Geändert von Marco: Fehler behoben, table-layout auf fixed für Stabilität */
 .table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; 
 }
 
-/* Geändert von Marco: Umbrüche im Header erlaubt und Standard-Padding */
 .table thead th {
     text-align: left;
-    font-size: 14px;
-    font-weight: 800;
-    color: #374151;
-    padding: 12px; 
-    border-bottom: 2px solid #d7d7d7;
-    background: #f7f7f7;
+    padding: var(--spacing-md);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-color);
+    background: var(--background-color);
     white-space: normal;
     word-break: break-word;
 }
 
-/* Geändert von Marco: Schutz gegen Überlaufen bei langen Wörtern */
 .table tbody td {
-    padding: 14px 12px;
-    border-bottom: 1px solid #d7d7d7;
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
     vertical-align: middle;
-    background: #fff;
+    background: var(--surface-color);
     word-break: break-word;
     overflow-wrap: break-word;
 }
@@ -108,32 +112,16 @@
     border-bottom: none;
 }
 
-.colPin {
-    width: 44px;
-}
+.colPin { width: 44px; }
+.colTask { width: 32%; }
+.colDesc { width: 34%; }
+.colDoneAt { width: 190px; }
+.colActions { width: 150px; }
 
-.colTask {
-    width: 32%;
-}
-
-.colDesc {
-    width: 34%;
-}
-
-.colDoneAt {
-    width: 190px;
-}
-
-.colActions {
-    width: 150px;
-}
-
-.pinCell {
-    text-align: center;
-}
+.pinCell { text-align: center; opacity: 0.5; }
 
 .pin {
-    font-size: 18px;
+    font-size: 1.1rem;
     display: inline-block;
     transform: rotate(-20deg);
     vertical-align: middle; 
@@ -146,24 +134,26 @@
 }
 
 .taskTitle {
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 1rem;
     white-space: normal;
 }
 
 .strike {
     text-decoration: line-through;
-    color: #6b7280;
+    color: var(--text-muted);
 }
 
 .desc {
-    color: #000;
-    font-size: 15px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
     white-space: normal;
 }
 
 .date {
     font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
 .actionsCell {
@@ -175,13 +165,11 @@
 
 .iconBtn {
     height: 34px;
-    width: 40px;
-    border-radius: 8px;
-    border: 2px solid #b8b8b8;
-    background: #fff;
+    width: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
     cursor: pointer;
-    font-size: 16px;
-    line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,30 +180,28 @@
     transform: scale(0.95);
 }
 
-/* Geändert von Marco: Restore-Button Sichtbarkeit gefixt */
 .restoreBtn {
-    background: #007bff; 
-    border-color: #0056b3;
+    background: var(--primary-color); 
+    border-color: var(--primary-color);
     color: #ffffff;
 }
 
-/* Geändert von Marco: Trash-Button Sichtbarkeit gefixt */
+.restoreBtn:hover {
+    background: var(--primary-hover);
+}
+
 .trashBtn {
-    background: #dc3545; 
-    border-color: #bd2130;
+    background: var(--danger-color); 
+    border-color: var(--danger-color);
     color: #ffffff; 
 }
 
-.restoreBtn:hover {
-    background: #0056b3;
-}
-
 .trashBtn:hover {
-    background: #bd2130;
+    background: var(--danger-hover);
 }
 
 .emptyRow {
-    padding: 16px 12px;
-    color: #6b7280;
+    padding: var(--spacing-lg) var(--spacing-md);
+    color: var(--text-muted);
     text-align: center;
 }

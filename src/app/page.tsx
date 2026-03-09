@@ -1,19 +1,30 @@
-"use client";
+'use client';
 
-import styles from "./page.module.css";
-import TasksPanel from "@/src/app/TaskPanel/TasksPanel"; // Dein Import
+import Link from 'next/link';
+import TasksPanel from '@/src/app/TaskPanel/TasksPanel';
+import { useAuth } from '@/src/contexts/AuthContext';
+import styles from './page.module.css';
 
 export default function Home() {
+  const { logout } = useAuth();
+
   return (
-    <div className={styles.page}>
-        <TasksPanel /> {/* Deine Komponente */}
-        
-        {/* Die neuen Elemente vom Server (Beispielhaft integriert) */}
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-            <p>
-                Statistics page: <a href="/statistics">statistics</a>
-            </p>
+    <main className={styles.pageContainer}>
+      <header className={styles.header}>
+        <h1>Task Dashboard</h1>
+        <div className={styles.headerActions}>
+          <Link href="/statistics" className={styles.navButton}>
+            Statistiken ansehen &rarr;
+          </Link>
+          <button onClick={logout} className={styles.logoutButton}>
+            Logout
+          </button>
         </div>
-    </div>
+      </header>
+      
+      <section>
+        <TasksPanel />
+      </section>
+    </main>
   );
 }
