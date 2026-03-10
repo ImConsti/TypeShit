@@ -1,6 +1,5 @@
 "use client";
 
-// Geändert von Marco: Der Import muss auf die EIGENE CSS-Datei zeigen, nicht auf das TasksPanel!
 import styles from "./CloseTask.module.css";
 import React, { useMemo, useState } from "react";
 
