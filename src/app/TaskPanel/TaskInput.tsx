@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import styles from "./TaskInput.module.css"; 
-import type { Priority, OpenTaskItem } from "@/src/app/OpenTask/OpenTask"; // Import Angepasst an die neue Struktur
+import type { Priority, OpenTaskItem } from "@/src/app/OpenTask/OpenTask";
 
 type TaskInputProps = {
     onAddTask: (task: Omit<OpenTaskItem, "id" | "pinned">) => void;

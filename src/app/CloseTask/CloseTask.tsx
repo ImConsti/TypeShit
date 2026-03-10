@@ -132,16 +132,11 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
                                 </td>
                             </tr>
                         ))}
-
-                        {sortedDone.length === 0 && (
-                            <tr>
-                                <td className={styles.emptyRow} colSpan={5}>
-                                    Keine erledigten Aufgaben vorhanden.
-                                </td>
-                            </tr>
-                        )}
                         </tbody>
                     </table>
+                    {sortedDone.length === 0 && (
+                        <div className={styles.footerHint}>Keine offenen Aufgaben vorhanden.</div>
+                    )}
                 </div>
             )}
         </section>

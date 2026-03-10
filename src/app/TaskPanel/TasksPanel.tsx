@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./TasksPanel.module.css";
 import OpenTask, { OpenTaskItem } from "@/src/app/OpenTask/OpenTask";
 import CloseTask, { DoneTaskItem } from "@/src/app/CloseTask/CloseTask";
@@ -11,8 +11,29 @@ export type Task = OpenTaskItem & {
     doneAt?: string;
 };
 
+const STORAGE_KEY = "task-manager-tasks";
+
 export default function TasksPanel() {
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                setTasks(JSON.parse(stored));
+            }
+        } catch (error) {
+            console.error("Failed to parse tasks from localStorage", error);
+        } finally {
+            setIsLoaded(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!isLoaded) return;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }, [tasks, isLoaded]);
 
     const handleAddTask = (newTaskData: Omit<OpenTaskItem, "id" | "pinned">) => {
         setTasks((prev) => [
@@ -24,6 +45,16 @@ export default function TasksPanel() {
             },
             ...prev
         ]);
+    };
+
+    const handleUpdate = (updatedTask: OpenTaskItem) => {
+        setTasks((prev) =>
+            prev.map((task) =>
+                task.id === updatedTask.id
+                    ? { ...task, ...updatedTask }
+                    : task
+            )
+        );
     };
 
     const toggleTask = (id: string, isDone: boolean) => {
@@ -49,7 +80,7 @@ export default function TasksPanel() {
     return (
         <div className={styles.page}>
             <TaskInput onAddTask={handleAddTask} />
-            <OpenTask tasks={openTasksForUI} onComplete={(id) => toggleTask(id, true)} />
+            <OpenTask tasks={openTasksForUI} onUpdate={handleUpdate} onComplete={(id) => toggleTask(id, true)} />
             <CloseTask doneTasks={doneTasksForUI} onRestore={(id) => toggleTask(id, false)} onRemove={removeTask} />
         </div>
     );
