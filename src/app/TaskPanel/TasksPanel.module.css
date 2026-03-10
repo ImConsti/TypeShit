@@ -1,0 +1,10 @@
+/* Geändert von Marco: CSS komplett modularisiert. 
+   Diese Datei steuert nur noch den globalen Rahmen des Panels. 
+   Alle Tabellen-Styles wurden in die jeweiligen Komponenten ausgelagert. */
+
+.page {
+    padding: 18px;
+    background: #ffffff;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: #1f2937;
+}

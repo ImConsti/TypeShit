@@ -1,0 +1,365 @@
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+    background: var(--surface-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.cardHeader {
+    background: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+}
+
+.cardTitle {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.count {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.selectWrap {
+    display: inline-flex;
+    align-items: center;
+}
+
+.select {
+    height: 34px;
+    padding: 0 34px 0 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+    appearance: none;
+    background-image:
+            linear-gradient(45deg, transparent 50%, var(--text-main) 50%),
+            linear-gradient(135deg, var(--text-main) 50%, transparent 50%),
+            linear-gradient(to right, transparent, transparent);
+    background-position: calc(100% - 18px) 13px, calc(100% - 12px) 13px, 0 0;
+    background-size: 6px 6px, 6px 6px, 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.collapseBtn {
+    height: 34px;
+    width: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-main);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tableWrap {
+    background: var(--surface-color);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.table thead th {
+    text-align: left;
+    padding: var(--spacing-md);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    border-bottom: 2px solid var(--border-color);
+    background: var(--background-color);
+    white-space: normal;
+    word-break: break-word;
+}
+
+.table thead th.colTask {
+    padding-left: 40px;
+}
+
+.table thead th.colPrio {
+    padding-left: 20px;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table tbody td {
+    padding: var(--spacing-md);
+    vertical-align: middle;
+    text-align: left;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    color: var(--text-main);
+}
+
+.colPin { width: 44px; }
+.colTask { width: 30%; }
+.colDesc { width: 35%; }
+.colPrio { width: 120px; }
+.colDue { width: 130px; }
+.colActions { width: 140px; }
+
+.pinCell {
+    text-align: center;
+}
+
+.pin {
+    font-size: 1.1rem;
+    display: inline-block;
+    transform: rotate(-20deg);
+    vertical-align: middle;
+}
+
+.taskLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    line-height: 1.4;
+    width: 100%;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    margin-left: -20px;
+    flex-shrink: 0;
+    accent-color: var(--primary-color);
+}
+
+.taskText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+}
+
+.taskTitle {
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0;
+    white-space: normal;
+}
+
+.desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    white-space: normal;
+}
+
+.date {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.9rem;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.badgeHigh {
+    background: var(--danger-color);
+    color: white;
+}
+
+.badgeMedium {
+    background: #f0cf71;
+    color: #6a4600;
+}
+
+.badgeLow {
+    background: #b7dec6;
+    color: #23583c;
+}
+
+.actionsCell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.iconBtn {
+    height: 34px;
+    min-width: 34px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: transform 0.1s ease, background-color 0.2s ease;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: inherit;
+    font-weight: 600;
+}
+
+.iconBtn:hover {
+    background: var(--background-color);
+}
+
+.iconBtn:active {
+    transform: scale(0.95);
+}
+
+.okBtn {
+    background: #10a86f;
+    border-color: #10a86f;
+    color: #fff;
+}
+
+.okBtn:hover {
+    background: #0d8a5b;
+}
+
+.editBtn {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.editBtn:hover {
+    background: var(--primary-hover);
+}
+
+.input,
+.selectInput,
+.dateInput,
+.textarea {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--surface-color);
+    color: var(--text-main);
+    font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.input:focus,
+.selectInput:focus,
+.dateInput:focus,
+.textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+.selectInput {
+    appearance: none;
+    padding-right: 34px;
+    background-image:
+            linear-gradient(45deg, transparent 50%, var(--text-main) 50%),
+            linear-gradient(135deg, var(--text-main) 50%, transparent 50%);
+    background-position: calc(100% - 18px) 14px, calc(100% - 12px) 14px;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+.dateInput {
+    font-variant-numeric: tabular-nums;
+}
+
+.textarea {
+    min-height: 72px;
+    resize: vertical;
+}
+
+.editActions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.saveBtn {
+    background: #10a86f;
+    border-color: #10a86f;
+    color: #fff;
+    min-width: 96px;
+}
+
+.saveBtn:hover {
+    background: #0d8a5b;
+}
+
+.cancelBtn {
+    background: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--text-main);
+    min-width: 96px;
+}
+
+.cancelBtn:hover {
+    background: var(--background-color);
+}
+
+.editingRow {
+    background: color-mix(in srgb, var(--primary-color) 6%, var(--surface-color));
+}
+
+.emptyRow {
+    padding: var(--spacing-lg) var(--spacing-md);
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.footerHint {
+    padding: var(--spacing-md);
+    background: var(--surface-color);
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.9rem;
+}
