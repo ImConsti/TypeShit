@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import styles from './StatisticsPage.module.css';
 
@@ -59,21 +62,56 @@ function StatusRow({ label, value, colorClass }) {
         <strong>{value}%</strong>
       </label>
       <div className={styles.statusTrack}>
-        <div className={`${styles.statusFill} ${styles[colorClass]}`} style={{ width: `${value}%` }} />
+        <div
+          className={`${styles.statusFill} ${styles[colorClass]}`}
+          style={{ width: `${value}%` }}
+        />
       </div>
     </div>
   );
 }
 
+function CircleStat({ label, value, ringColorClass }) {
+  return (
+    <div className={styles.circleStat}>
+      <div
+        className={`${styles.circleRing} ${styles[ringColorClass]}`}
+        style={{ '--percent': value }}
+      >
+        <div className={styles.circleInner}>{value}%</div>
+      </div>
+      <span className={styles.circleLabel}>{label}</span>
+    </div>
+  );
+}
+
 export default function StatisticsPage({ stats = defaultStats }) {
+  const [statusView, setStatusView] = useState('bars');
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
   const finishedPercent = asPercent(stats.summary.finished, stats.summary.totalTasks);
   const inProgressPercent = asPercent(stats.summary.inProgress, stats.summary.totalTasks);
   const importantPercent = asPercent(stats.summary.important, stats.summary.totalTasks);
 
+  useEffect(() => {
+  function handleClickOutside(event) {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setMenuOpen(false);
+    }
+  }
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
+
   return (
     <div className={styles.statisticsPage}>
       <div className={styles.statisticsShell}>
-        
+
         <div className={styles.navigationRow}>
           <Link href="/" className={styles.backButton}>
             &larr; Zurück zum Dashboard
@@ -133,7 +171,9 @@ export default function StatisticsPage({ stats = defaultStats }) {
                   <tr key={task.title}>
                     <td>{task.title}</td>
                     <td>
-                      <span className={`${styles.badge} ${styles[task.priority.toLowerCase()]}`}>{task.priority}</span>
+                      <span className={`${styles.badge} ${styles[task.priority.toLowerCase()]}`}>
+                        {task.priority}
+                      </span>
                     </td>
                     <td>{task.due}</td>
                   </tr>
@@ -143,12 +183,60 @@ export default function StatisticsPage({ stats = defaultStats }) {
           </article>
 
           <article className={styles.panel}>
-            <h2>Status Breakdown</h2>
-            <div className={styles.statusBars}>
-              <StatusRow label="Finished" value={finishedPercent} colorClass="ok" />
-              <StatusRow label="In Progress" value={inProgressPercent} colorClass="danger" />
-              <StatusRow label="Important" value={importantPercent} colorClass="warn" />
+            <div className={styles.statusHeader}>
+              <h2>Status Breakdown</h2>
+
+              <div className={styles.menuWrapper} ref={menuRef}>
+                <button
+                  type="button"
+                  className={styles.menuButton}
+                  onClick={() => setMenuOpen((prev) => !prev)}
+                  aria-label="Ansicht wählen"
+                >
+                  &#8942;
+                </button>
+
+                {menuOpen && (
+                  <div className={styles.dropdownMenu}>
+                    <button
+                      type="button"
+                      className={`${styles.dropdownItem} ${statusView === 'bars' ? styles.activeItem : ''}`}
+                      onClick={() => {
+                        setStatusView('bars');
+                        setMenuOpen(false);
+                      }}
+                    >
+                      {statusView === 'bars' ? '✓ ' : ''}Balkenansicht
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`${styles.dropdownItem} ${statusView === 'circles' ? styles.activeItem : ''}`}
+                      onClick={() => {
+                        setStatusView('circles');
+                        setMenuOpen(false);
+                      }}
+                    >
+                      {statusView === 'circles' ? '✓ ' : ''}Kreisansicht
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
+
+            {statusView === 'bars' ? (
+              <div className={styles.statusBars}>
+                <StatusRow label="Finished" value={finishedPercent} colorClass="ok" />
+                <StatusRow label="In Progress" value={inProgressPercent} colorClass="danger" />
+                <StatusRow label="Important" value={importantPercent} colorClass="warn" />
+              </div>
+            ) : (
+              <div className={styles.circleStats}>
+                <CircleStat label="Finished" value={finishedPercent} ringColorClass="ringOk" />
+                <CircleStat label="In Progress" value={inProgressPercent} ringColorClass="ringDanger" />
+                <CircleStat label="Important" value={importantPercent} ringColorClass="ringWarn" />
+              </div>
+            )}
           </article>
 
           <article className={styles.panel}>
