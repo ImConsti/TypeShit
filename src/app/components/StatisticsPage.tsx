@@ -1,10 +1,41 @@
-'use client';
+'ause client';
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import styles from './StatisticsPage.module.css';
 
-const defaultStats = {
+interface Task {
+  title: string;
+  priority: string;
+  due: string;
+}
+
+interface WeeklyCompletion {
+  day: string;
+  done: number;
+  total: number;
+}
+
+export interface StatisticsData {
+  user: {
+    name: string;
+    email: string;
+    weekday: string;
+    date: string;
+  };
+  summary: {
+    totalTasks: number;
+    finished: number;
+    inProgress: number;
+    important: number;
+    streakDays: number;
+  };
+  openTasks: Task[];
+  importantTasks: string[];
+  weeklyCompletion: WeeklyCompletion[];
+}
+
+const defaultStats: StatisticsData = {
   user: {
     name: "Michael Lippert",
     email: "michigen5@gmail.com",
@@ -35,12 +66,18 @@ const defaultStats = {
   ],
 };
 
-function asPercent(done, total) {
+function asPercent(done: number, total: number): number {
   if (!total) return 0;
   return Math.round((done / total) * 100);
 }
 
-function WeeklyRow({ day, done, total }) {
+interface WeeklyRowProps {
+  day: string;
+  done: number;
+  total: number;
+}
+
+function WeeklyRow({ day, done, total }: WeeklyRowProps) {
   const percent = asPercent(done, total);
 
   return (
@@ -54,7 +91,13 @@ function WeeklyRow({ day, done, total }) {
   );
 }
 
-function StatusRow({ label, value, colorClass }) {
+interface StatusRowProps {
+  label: string;
+  value: number;
+  colorClass: string;
+}
+
+function StatusRow({ label, value, colorClass }: StatusRowProps) {
   return (
     <div className={styles.statusRow}>
       <label>
@@ -71,12 +114,18 @@ function StatusRow({ label, value, colorClass }) {
   );
 }
 
-function CircleStat({ label, value, ringColorClass }) {
+interface CircleStatProps {
+  label: string;
+  value: number;
+  ringColorClass: string;
+}
+
+function CircleStat({ label, value, ringColorClass }: CircleStatProps) {
   return (
     <div className={styles.circleStat}>
       <div
         className={`${styles.circleRing} ${styles[ringColorClass]}`}
-        style={{ '--percent': value }}
+        style={{ '--percent': value } as React.CSSProperties}
       >
         <div className={styles.circleInner}>{value}%</div>
       </div>
@@ -85,28 +134,32 @@ function CircleStat({ label, value, ringColorClass }) {
   );
 }
 
-export default function StatisticsPage({ stats = defaultStats }) {
-  const [statusView, setStatusView] = useState('bars');
+interface StatisticsPageProps {
+  stats?: StatisticsData;
+}
+
+export default function StatisticsPage({ stats = defaultStats }: StatisticsPageProps) {
+  const [statusView, setStatusView] = useState<'bars' | 'circles'>('bars');
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const finishedPercent = asPercent(stats.summary.finished, stats.summary.totalTasks);
   const inProgressPercent = asPercent(stats.summary.inProgress, stats.summary.totalTasks);
   const importantPercent = asPercent(stats.summary.important, stats.summary.totalTasks);
 
   useEffect(() => {
-  function handleClickOutside(event) {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setMenuOpen(false);
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
     }
-  }
 
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, []);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className={styles.statisticsPage}>
