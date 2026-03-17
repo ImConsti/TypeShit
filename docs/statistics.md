@@ -70,3 +70,8 @@ Prozente werden ueber `asPercent(done, total)` berechnet:
 - Prioritaeten sind derzeit auf `High`, `Medium`, `Low` ausgelegt (ueber CSS-Klassen `badge.high`, `badge.medium`, `badge.low`).
 - Fuer Live-Daten kann `stats` in `app/statistics/page.tsx` aus API/DB geladen und an `StatisticsPage` uebergeben werden.
 - Wenn spaeter ein Dashboard dazu kommt, kann diese Komponente als wiederverwendbares Analytics-Modul eingebunden werden, ohne die Route `/statistics` zu verlieren.
+
+## Kreisansicht
+- StatisticsPage.jsx verwendet jetzt `use client` 
+- Man kann mit dem Button Ansichten umschalten
+- Angepasst für kleinere Displays
