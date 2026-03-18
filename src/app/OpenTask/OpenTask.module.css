@@ -271,7 +271,6 @@
 .dateInput,
 .textarea {
     width: 100%;
-    min-width: 150px;
     min-height: 36px;
     padding: 8px 10px;
     border: 1px solid var(--border-color);
