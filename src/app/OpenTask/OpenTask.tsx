@@ -166,9 +166,10 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
                         <tbody>
                         {sortedTasks.map((t) => {
                             const isEditing = editingTaskId === t.id;
+                            const isOverdue = t.dueDate ? new Date(t.dueDate) < new Date() : false;
 
                             return (
-                                <tr key={t.id}>
+                                <tr key={t.id} className={isOverdue && !isEditing ? styles.overdueRow : ""}>
                                     <td className={styles.pinCell}>
                                         <span className={styles.pin} aria-hidden>📌</span>
                                     </td>
@@ -249,7 +250,10 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
                                                     })
                                                 }
                                             />
-                                        ) : (
+                                        ) : ( isOverdue ? ( <span className={`${styles.date} ${styles.overdueDate}`}>
+                                            <strong>Überfällig!</strong>
+                                        </span>) :
+                                            
                                             <span className={styles.date}>
                                                     {t.dueDate
                                                         ? new Date(t.dueDate).toLocaleDateString("de-DE", {

@@ -416,3 +416,12 @@
     text-align: center;
     font-size: 0.9rem;
 }
+
+.overdueRow {
+    background: color-mix(in srgb, var(--danger-color)18%, var(--surface-color));
+}
+
+.overdueText {
+    color: var(--danger-color);
+    font-weight: 700;
+}
