@@ -2,6 +2,8 @@
 
 import styles from "./CloseTask.module.css";
 import React, { useMemo, useState } from "react";
+import ConfirmModal from "@/src/app/components/ConfirmModal";
+import DeleteButton from "@/src/app/components/DeleteButton";
 
 export type DoneTaskItem = {
     id: string;
@@ -22,6 +24,7 @@ type CloseTaskProps = {
 export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskProps) {
     const [doneCollapsed, setDoneCollapsed] = useState(false);
     const [doneSort, setDoneSort] = useState<SortDone>("Erledigt am");
+    const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
     /* Geändert von Marco: Sortier-Logik auf ISO-Strings angepasst */
     const sortedDone = useMemo(() => {
@@ -29,6 +32,7 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
     }, [doneTasks, doneSort]);
 
     return (
+        <>
         <section className={styles.card}>
             <header className={styles.cardHeader}>
                 <div className={styles.titleRow}>
@@ -119,15 +123,7 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
                                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                                     </button>
 
-                                    {/* Geändert von Marco: styles.trashBtn wird jetzt aus CloseTask.module.css geladen */}
-                                    <button
-                                        className={`${styles.iconBtn} ${styles.trashBtn}`}
-                                        onClick={() => onRemove?.(t.id)}
-                                        aria-label="Löschen"
-                                        title="Löschen"
-                                    >
-                                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                    </button>
+                                    <DeleteButton onClick={() => setPendingDeleteId(t.id)} />
                                 </td>
                             </tr>
                         ))}
@@ -139,5 +135,14 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
                 </div>
             )}
         </section>
+
+        {pendingDeleteId && (
+            <ConfirmModal
+                message="Aufgabe wirklich löschen?"
+                onConfirm={() => { onRemove?.(pendingDeleteId); setPendingDeleteId(null); }}
+                onCancel={() => setPendingDeleteId(null)}
+            />
+        )}
+        </>
     );
 }

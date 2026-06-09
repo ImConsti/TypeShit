@@ -2,6 +2,8 @@
 
 import React, { useMemo, useState } from "react";
 import styles from "./OpenTask.module.css";
+import ConfirmModal from "@/src/app/components/ConfirmModal";
+import DeleteButton from "@/src/app/components/DeleteButton";
 
 export type Priority = "Hoch" | "Mittel" | "Niedrig";
 
@@ -20,6 +22,7 @@ type Props = {
     tasks: OpenTaskItem[];
     onComplete: (id: string) => void;
     onUpdate: (updatedTask: OpenTaskItem) => void;
+    onRemove: (id: string) => void;
 };
 
 const priorityClass: Record<Priority, string> = {
@@ -63,10 +66,11 @@ function useTaskSort(tasks: OpenTaskItem[]) {
     return { openSort, setOpenSort, sortedTasks };
 }
 
-export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
+export default function OpenTask({ tasks, onComplete, onUpdate, onRemove }: Props) {
     const [openCollapsed, setOpenCollapsed] = useState(false);
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
     const [editValues, setEditValues] = useState<OpenTaskItem | null>(null);
+    const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
     const { searchQuery, setSearchQuery, filteredTasks, isFiltered } = useTaskSearch(tasks);
     const { openSort, setOpenSort, sortedTasks } = useTaskSort(filteredTasks);
@@ -89,6 +93,7 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
     };
 
     return (
+        <>
         <section className={styles.card}>
             <header className={styles.cardHeader}>
                 <div className={styles.titleRow}>
@@ -311,6 +316,8 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
                                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                     </svg>
                                                 </button>
+
+                                                <DeleteButton onClick={() => setPendingDeleteId(t.id)} />
                                             </>
                                         )}
                                     </td>
@@ -327,5 +334,14 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
                 </div>
             )}
         </section>
+
+        {pendingDeleteId && (
+            <ConfirmModal
+                message="Aufgabe wirklich löschen?"
+                onConfirm={() => { onRemove(pendingDeleteId); setPendingDeleteId(null); }}
+                onCancel={() => setPendingDeleteId(null)}
+            />
+        )}
+        </>
     );
 }
