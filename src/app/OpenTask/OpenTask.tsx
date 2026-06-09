@@ -14,7 +14,7 @@ export type OpenTaskItem = {
     pinned?: boolean;
 };
 
-type SortOpen = "Fällig am";
+type SortOpen = "Fällig am" | "Priorität";
 
 type Props = {
     tasks: OpenTaskItem[];
@@ -28,21 +28,48 @@ const priorityClass: Record<Priority, string> = {
     Niedrig: styles.badgeLow,
 };
 
-export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
-    const [openCollapsed, setOpenCollapsed] = useState(false);
+const priorityOrder: Record<Priority, number> = { Hoch: 0, Mittel: 1, Niedrig: 2 };
+
+function useTaskSearch(tasks: OpenTaskItem[]) {
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const isFiltered = searchQuery.trim() !== "";
+
+    const filteredTasks = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        if (!q) return tasks;
+        return tasks.filter(
+            (t) => t.title.toLowerCase().includes(q) || t.description.toLowerCase().includes(q)
+        );
+    }, [tasks, searchQuery]);
+
+    return { searchQuery, setSearchQuery, filteredTasks, isFiltered};
+}
+
+function useTaskSort(tasks: OpenTaskItem[]) {
     const [openSort, setOpenSort] = useState<SortOpen>("Fällig am");
 
-    const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-    const [editValues, setEditValues] = useState<OpenTaskItem | null>(null);
-
-    const sortedOpen = useMemo(() => {
+    const sortedTasks = useMemo(() => {
         return [...tasks].sort((a, b) => {
+            if (openSort === "Priorität") {
+                return priorityOrder[a.priority] - priorityOrder[b.priority];
+            }
             const timeA = a.dueDate ? new Date(a.dueDate).getTime() : Number.POSITIVE_INFINITY;
             const timeB = b.dueDate ? new Date(b.dueDate).getTime() : Number.POSITIVE_INFINITY;
-
             return timeA - timeB;
         });
     }, [tasks, openSort]);
+
+    return { openSort, setOpenSort, sortedTasks };
+}
+
+export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
+    const [openCollapsed, setOpenCollapsed] = useState(false);
+    const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+    const [editValues, setEditValues] = useState<OpenTaskItem | null>(null);
+
+    const { searchQuery, setSearchQuery, filteredTasks, isFiltered } = useTaskSearch(tasks);
+    const { openSort, setOpenSort, sortedTasks } = useTaskSort(filteredTasks);
 
     const startEditing = (task: OpenTaskItem) => {
         setEditingTaskId(task.id);
@@ -66,7 +93,10 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
             <header className={styles.cardHeader}>
                 <div className={styles.titleRow}>
                     <h2 className={styles.cardTitle}>
-                        Offene Aufgaben <span className={styles.count}>({tasks.length})</span>
+                        Offene Aufgaben{" "}
+                        <span className={styles.count}>
+                            ({isFiltered ? `${sortedTasks.length}/${tasks.length}` : tasks.length})
+                        </span>
                     </h2>
 
                     <div className={styles.headerRight}>
@@ -77,7 +107,8 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
                                 onChange={(e) => setOpenSort(e.target.value as SortOpen)}
                                 aria-label="Sortierung offene Aufgaben"
                             >
-                                <option>Fällig am</option>
+                                <option value="Fällig am">Fällig am</option>
+                                <option value="Priorität">Priorität</option>
                             </select>
                         </label>
 
@@ -99,6 +130,23 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
                         </button>
                     </div>
                 </div>
+
+                <div className={styles.filterRow}>
+                    <div className={styles.searchWrap}>
+                        <svg className={styles.searchIcon} viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input
+                            className={styles.searchInput}
+                            type="search"
+                            placeholder="Aufgaben suchen..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            aria-label="Aufgaben suchen"
+                        />
+                    </div>
+                </div>
             </header>
 
             {!openCollapsed && (
@@ -116,7 +164,7 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
                         </thead>
 
                         <tbody>
-                        {sortedOpen.map((t) => {
+                        {sortedTasks.map((t) => {
                             const isEditing = editingTaskId === t.id;
 
                             return (
@@ -267,8 +315,10 @@ export default function OpenTask({ tasks, onComplete, onUpdate }: Props) {
                         })}
                         </tbody>
                     </table>
-                    {sortedOpen.length === 0 && (
-                        <div className={styles.footerHint}>Keine erledigten Aufgaben vorhanden.</div>
+                    {sortedTasks.length === 0 && (
+                        <div className={styles.footerHint}>
+                            {isFiltered ? "Keine Aufgaben entsprechen den Filterkriterien." : "Keine offenen Aufgaben vorhanden."}
+                        </div>
                     )}
                 </div>
             )}
