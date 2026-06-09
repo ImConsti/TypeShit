@@ -37,10 +37,10 @@ export interface StatisticsData {
 
 const defaultStats: StatisticsData = {
   user: {
-    name: "Michael Lippert",
-    email: "michigen5@gmail.com",
-    weekday: "Wednesday",
-    date: "March 4, 2026",
+    name: "Demo User",
+    email: "user@example.com",
+    weekday: "Thursday",
+    date: "June 11, 2026",
   },
   summary: {
     totalTasks: 84,
