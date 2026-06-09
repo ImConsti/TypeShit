@@ -80,3 +80,6 @@ Die Anwendung ist dann unter [http://localhost:3000](http://localhost:3000) erre
 
 - [Datenmodell](docs/data-model.md) – Ressourcen, Eigenschaften und Beziehungen
 - [API-Struktur](docs/api.md) – Geplante REST-Endpunkte mit Aktion, Methode, Input/Output
+
+
+~README erstellt mit Claude
