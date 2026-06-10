@@ -26,7 +26,6 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
     const [doneSort, setDoneSort] = useState<SortDone>("Erledigt am");
     const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
-    /* Geändert von Marco: Sortier-Logik auf ISO-Strings angepasst */
     const sortedDone = useMemo(() => {
         return [...doneTasks].sort((a, b) => new Date(b.doneAt).getTime() - new Date(a.doneAt).getTime());
     }, [doneTasks, doneSort]);
@@ -58,7 +57,6 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
                             aria-label={doneCollapsed ? "Ausklappen" : "Einklappen"}
                             title={doneCollapsed ? "Ausklappen" : "Einklappen"}
                         >
-                            {/* Geändert von Marco: SVGs eingebaut */}
                             {doneCollapsed ? (
                                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                             ) : (
@@ -101,7 +99,6 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
 
                                 <td className={styles.dueCell}>
                                     <span className={styles.date}>
-                                        {/* Geändert von Marco: UI-Anzeige von ISO auf deutsches Format umbauen */}
                                         {new Date(t.doneAt).toLocaleString("de-DE", { 
                                             day: "2-digit", 
                                             month: "2-digit", 
@@ -113,7 +110,6 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
                                 </td>
 
                                 <td className={styles.actionsCell}>
-                                    {/* Geändert von Marco: styles.restoreBtn wird jetzt aus CloseTask.module.css geladen */}
                                     <button
                                         className={`${styles.iconBtn} ${styles.restoreBtn}`} 
                                         aria-label="Zurück"
@@ -130,7 +126,7 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
                         </tbody>
                     </table>
                     {sortedDone.length === 0 && (
-                        <div className={styles.footerHint}>Keine offenen Aufgaben vorhanden.</div>
+                        <div className={styles.footerHint}>Keine erledigten Aufgaben vorhanden.</div>
                     )}
                 </div>
             )}
