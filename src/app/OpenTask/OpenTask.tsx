@@ -33,6 +33,8 @@ const priorityClass: Record<Priority, string> = {
 
 const priorityOrder: Record<Priority, number> = { Hoch: 0, Mittel: 1, Niedrig: 2 };
 
+const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
+
 function useTaskSearch(tasks: OpenTaskItem[]) {
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -257,6 +259,7 @@ export default function OpenTask({ tasks, onComplete, onUpdate, onRemove }: Prop
                                             <input
                                                 className={styles.input}
                                                 type="date"
+                                                min={today}
                                                 value={editValues.dueDate ?? ""}
                                                 onChange={(e) =>
                                                     setEditValues({
