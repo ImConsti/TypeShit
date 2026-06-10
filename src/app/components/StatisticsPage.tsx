@@ -114,33 +114,12 @@ function StatusRow({ label, value, colorClass }: StatusRowProps) {
   );
 }
 
-interface CircleStatProps {
-  label: string;
-  value: number;
-  ringColorClass: string;
-}
-
-function CircleStat({ label, value, ringColorClass }: CircleStatProps) {
-  return (
-    <div className={styles.circleStat}>
-      <div
-        className={`${styles.circleRing} ${styles[ringColorClass]}`}
-        style={{ '--percent': value } as React.CSSProperties}
-      >
-        <div className={styles.circleInner}>{value}%</div>
-      </div>
-      <span className={styles.circleLabel}>{label}</span>
-    </div>
-  );
-}
-
 interface StatisticsPageProps {
   stats?: StatisticsData;
 }
 
 export default function StatisticsPage({ stats = defaultStats }: StatisticsPageProps) {
   const [statusView, setStatusView] = useState<'bars' | 'circles'>('bars');
-
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -284,10 +263,33 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
                 <StatusRow label="Important" value={importantPercent} colorClass="warn" />
               </div>
             ) : (
-              <div className={styles.circleStats}>
-                <CircleStat label="Finished" value={finishedPercent} ringColorClass="ringOk" />
-                <CircleStat label="In Progress" value={inProgressPercent} ringColorClass="ringDanger" />
-                <CircleStat label="Important" value={importantPercent} ringColorClass="ringWarn" />
+              <div className={styles.donutContainer}>
+                <div
+                  className={styles.donutRing}
+                  style={{ '--finished-pct': `${finishedPercent}%` } as React.CSSProperties}
+                >
+                  <div className={styles.donutInner}>
+                    <div className={styles.donutTotal}>{stats.summary.totalTasks}</div>
+                    <div className={styles.donutLabel}>Total</div>
+                  </div>
+                </div>
+                
+                <div className={styles.donutLegend}>
+                  <div className={styles.legendItem}>
+                    <div className={`${styles.legendColor} ${styles.legendOk}`}></div>
+                    <div className={styles.legendText}>
+                      <span>Finished</span>
+                      <small>{stats.summary.finished} Tasks ({finishedPercent}%)</small>
+                    </div>
+                  </div>
+                  <div className={styles.legendItem}>
+                    <div className={`${styles.legendColor} ${styles.legendDanger}`}></div>
+                    <div className={styles.legendText}>
+                      <span>In Progress</span>
+                      <small>{stats.summary.inProgress} Tasks ({inProgressPercent}%)</small>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </article>
