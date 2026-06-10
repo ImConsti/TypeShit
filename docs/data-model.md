@@ -6,16 +6,16 @@
 
 Zentrale Ressource der Anwendung. Repräsentiert eine einzelne Aufgabe.
 
-| Eigenschaft | Typ | Pflicht | Beschreibung |
-|---|---|---|---|
-| `id` | `string` (UUID) | ja | Eindeutige ID, generiert via `crypto.randomUUID()` |
-| `title` | `string` | ja | Titel der Aufgabe |
-| `description` | `string` | ja | Beschreibung der Aufgabe (kann leer sein) |
+| Eigenschaft | Typ                               | Pflicht | Beschreibung |
+|---|-----------------------------------|---|---|
+| `id` | `string` (UUID)                   | ja | Eindeutige ID, generiert via `crypto.randomUUID()` |
+| `title` | `string`                          | ja | Titel der Aufgabe |
+| `description` | `string`                          | ja | Beschreibung der Aufgabe (kann leer sein) |
 | `priority` | `"Hoch" \| "Mittel" \| "Niedrig"` | ja | Prioritätsstufe |
-| `dueDate` | `string` (ISO 8601) | nein | Fälligkeitsdatum, z. B. `"2026-06-10"` |
-| `isDone` | `boolean` | ja | `true` wenn erledigt, sonst `false` |
-| `doneAt` | `string` (ISO 8601) | nein | Zeitstempel der Erledigung, z. B. `"2026-06-09T14:32:00.000Z"` |
-| `pinned` | `boolean` | nein | Ob die Aufgabe angepinnt ist (reserviert, noch nicht genutzt) |
+| `dueDate` | `string`                          | nein | Fälligkeitsdatum, z. B. `"2026-06-10"` |
+| `isDone` | `boolean`                         | ja | `true` wenn erledigt, sonst `false` |
+| `doneAt` | `string`                          | nein | Zeitstempel der Erledigung, z. B. `"2026-06-09T14:32:00.000Z"` |
+| `pinned` | `boolean`                         | nein | Ob die Aufgabe angepinnt ist (reserviert, noch nicht genutzt) |
 
 **TypeScript-Definition:**
 
