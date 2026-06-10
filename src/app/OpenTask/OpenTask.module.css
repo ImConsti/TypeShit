@@ -421,7 +421,6 @@
     background: color-mix(in srgb, var(--danger-color)18%, var(--surface-color));
 }
 
-.overdueText {
-    color: var(--danger-color);
-    font-weight: 700;
+.todayRow {
+    background: color-mix(in srgb, #db9124 12%, var(--surface-color));
 }

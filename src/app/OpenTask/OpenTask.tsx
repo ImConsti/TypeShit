@@ -171,10 +171,20 @@ export default function OpenTask({ tasks, onComplete, onUpdate, onRemove }: Prop
                         <tbody>
                         {sortedTasks.map((t) => {
                             const isEditing = editingTaskId === t.id;
-                            const isOverdue = t.dueDate ? new Date(t.dueDate) < new Date() : false;
-
+                            const todayStr = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
+                            const isOverdue = t.dueDate ?t.dueDate < todayStr : false;
+                            const isToday = t.dueDate ?  t.dueDate === todayStr : false;
+                            
+                            let rowClass = "";
+                            if (isOverdue && !isEditing) {
+                                rowClass = styles.overdueRow;
+                            }
+                            else if (isToday && !isEditing) {
+                                rowClass = styles.todayRow;
+                            }
+                            
                             return (
-                                <tr key={t.id} className={isOverdue && !isEditing ? styles.overdueRow : ""}>
+                                <tr key={t.id} className={rowClass}>
                                     <td className={styles.pinCell}>
                                         <span className={styles.pin} aria-hidden>📌</span>
                                     </td>
@@ -257,6 +267,8 @@ export default function OpenTask({ tasks, onComplete, onUpdate, onRemove }: Prop
                                             />
                                         ) : ( isOverdue ? ( <span className={`${styles.date} ${styles.overdueDate}`}>
                                             <strong>Überfällig!</strong>
+                                        </span>) : isToday ?  ( <span className={`${styles.date} ${styles.todayDate}`}>
+                                            <strong>Heute fällig!</strong>
                                         </span>) :
                                             
                                             <span className={styles.date}>
