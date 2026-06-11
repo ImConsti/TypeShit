@@ -16,7 +16,7 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
 
     const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         const cleanTitle = title.trim();
         const cleanDescription = description.trim();
