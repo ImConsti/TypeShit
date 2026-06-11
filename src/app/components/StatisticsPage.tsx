@@ -263,10 +263,27 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
             </div>
 
             {statusView === 'bars' ? (
-              <div className={styles.statusBars}>
-                <StatusRow label="Erledigt" value={finishedPercent} colorClass="ok" />
-                <StatusRow label="Offen" value={inProgressPercent} colorClass="danger" />
-                <StatusRow label="Wichtig" value={importantPercent} colorClass="warn" />
+              <div className={styles.stackedBarWrapper}>
+                <div className={styles.stackedBarTrack}>
+                  <div className={styles.stackedBarFillGreen} style={{ width: `${finishedPercent}%` }} />
+                  <div className={styles.stackedBarFillRed} style={{ width: `${inProgressPercent}%` }} />
+                </div>
+                <div className={styles.stackedLegend}>
+                  <div className={styles.legendItem}>
+                    <div className={`${styles.legendColor} ${styles.legendOk}`} />
+                    <div className={styles.legendText}>
+                      <span>Erledigt</span>
+                      <small>{stats.summary.finished} Tasks ({finishedPercent}%)</small>
+                    </div>
+                  </div>
+                  <div className={styles.legendItem}>
+                    <div className={`${styles.legendColor} ${styles.legendDanger}`} />
+                    <div className={styles.legendText}>
+                      <span>Offen</span>
+                      <small>{stats.summary.inProgress} Tasks ({inProgressPercent}%)</small>
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : (
               <div className={styles.donutContainer}>
