@@ -14,6 +14,8 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
     const [priority, setPriority] = useState<Priority>("Mittel");
     const [dueDate, setDueDate] = useState("");
 
+    const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const cleanTitle = title.trim();
@@ -83,6 +85,7 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
                 <input
                     type="date"
                     value={dueDate}
+                    min={today}
                     onChange={(e) => setDueDate(e.target.value)}
                     className={`${styles.inputField} ${styles.dateInput}`}
                 />

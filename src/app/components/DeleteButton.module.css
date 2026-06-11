@@ -1,0 +1,23 @@
+.btn {
+    height: 34px;
+    min-width: 34px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid var(--danger-color);
+    background: var(--danger-color);
+    color: #ffffff;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.1s ease;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:hover {
+    filter: brightness(0.9);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}

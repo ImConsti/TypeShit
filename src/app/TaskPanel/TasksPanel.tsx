@@ -80,7 +80,7 @@ export default function TasksPanel() {
     return (
         <div className={styles.page}>
             <TaskInput onAddTask={handleAddTask} />
-            <OpenTask tasks={openTasksForUI} onUpdate={handleUpdate} onComplete={(id) => toggleTask(id, true)} />
+            <OpenTask tasks={openTasksForUI} onUpdate={handleUpdate} onComplete={(id) => toggleTask(id, true)} onRemove={removeTask} />
             <CloseTask doneTasks={doneTasksForUI} onRestore={(id) => toggleTask(id, false)} onRemove={removeTask} />
         </div>
     );

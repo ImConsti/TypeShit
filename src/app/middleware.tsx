@@ -11,8 +11,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (authToken && isPublicRoute) {
-    return NextResponse.redirect(new URL('/', request.url));
+  if (authToken && (isPublicRoute || path === '/')) {
+    return NextResponse.redirect(new URL('/statistics', request.url));
   }
 
   return NextResponse.next();

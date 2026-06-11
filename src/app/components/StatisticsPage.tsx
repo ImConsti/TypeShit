@@ -37,32 +37,32 @@ export interface StatisticsData {
 
 const defaultStats: StatisticsData = {
   user: {
-    name: "Michael Lippert",
-    email: "michigen5@gmail.com",
-    weekday: "Wednesday",
-    date: "March 4, 2026",
+    name: "Demo User",
+    email: "user@example.com",
+    weekday: "Donnerstag",
+    date: "11. Juni 2026",
   },
   summary: {
-    totalTasks: 84,
-    finished: 29,
-    inProgress: 55,
-    important: 4,
+    totalTasks: 45,
+    finished: 32,
+    inProgress: 13,
+    important: 5,
     streakDays: 9,
   },
   openTasks: [
-    { title: "Prepare sprint review", priority: "High", due: "Mar 6, 2026" },
-    { title: "Type safety cleanup", priority: "Medium", due: "Mar 8, 2026" },
-    { title: "Refactor reminder module", priority: "Low", due: "Mar 10, 2026" },
+    { title: "Präsentation vorbereiten", priority: "Hoch", due: "12. Jun 2026" },
+    { title: "Backend-Architektur evaluieren", priority: "Hoch", due: "13. Jun 2026" },
+    { title: "Routing-Bug fixen", priority: "Mittel", due: "14. Jun 2026" },
   ],
-  importantTasks: ["Prepare sprint review", "Fix sync race condition", "Plan milestone release"],
+  importantTasks: ["Präsentation vorbereiten", "Backend-Architektur evaluieren", "Datenbank-Schema entwerfen"],
   weeklyCompletion: [
-    { day: "Mon", done: 6, total: 8 },
-    { day: "Tue", done: 7, total: 9 },
-    { day: "Wed", done: 5, total: 7 },
-    { day: "Thu", done: 8, total: 10 },
-    { day: "Fri", done: 9, total: 11 },
-    { day: "Sat", done: 4, total: 6 },
-    { day: "Sun", done: 3, total: 5 },
+    { day: "Mo", done: 4, total: 5 },
+    { day: "Di", done: 6, total: 7 },
+    { day: "Mi", done: 3, total: 3 },
+    { day: "Do", done: 5, total: 8 },
+    { day: "Fr", done: 7, total: 10 },
+    { day: "Sa", done: 4, total: 5 },
+    { day: "So", done: 3, total: 7 },
   ],
 };
 
@@ -114,33 +114,18 @@ function StatusRow({ label, value, colorClass }: StatusRowProps) {
   );
 }
 
-interface CircleStatProps {
-  label: string;
-  value: number;
-  ringColorClass: string;
-}
-
-function CircleStat({ label, value, ringColorClass }: CircleStatProps) {
-  return (
-    <div className={styles.circleStat}>
-      <div
-        className={`${styles.circleRing} ${styles[ringColorClass]}`}
-        style={{ '--percent': value } as React.CSSProperties}
-      >
-        <div className={styles.circleInner}>{value}%</div>
-      </div>
-      <span className={styles.circleLabel}>{label}</span>
-    </div>
-  );
-}
-
 interface StatisticsPageProps {
   stats?: StatisticsData;
 }
 
+const priorityClassMap: Record<string, string> = {
+  Hoch: styles.high,
+  Mittel: styles.medium,
+  Niedrig: styles.low
+};
+
 export default function StatisticsPage({ stats = defaultStats }: StatisticsPageProps) {
   const [statusView, setStatusView] = useState<'bars' | 'circles'>('bars');
-
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -173,9 +158,9 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
 
         <header className={styles.statsHeader}>
           <div>
-            <span className={styles.eyebrow}>Task Analytics</span>
-            <h1>Statistics</h1>
-            <p>Quick view of throughput, active workload, and completion momentum.</p>
+            <span className={styles.eyebrow}>Aufgaben-Analyse</span>
+            <h1>Statistiken</h1>
+            <p>Schnellübersicht über Durchsatz, Auslastung und Fortschritt.</p>
           </div>
 
           <aside className={styles.datePill}>
@@ -187,36 +172,36 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
 
         <section className={styles.summaryGrid} aria-label="Summary Metrics">
           <article className={styles.metricCard}>
-            <p>Total Tasks</p>
+            <p>Gesamt</p>
             <strong>{stats.summary.totalTasks}</strong>
           </article>
           <article className={styles.metricCard}>
-            <p>Finished</p>
+            <p>Erledigt</p>
             <strong>{stats.summary.finished}</strong>
           </article>
           <article className={styles.metricCard}>
-            <p>In Progress</p>
+            <p>Offen</p>
             <strong>{stats.summary.inProgress}</strong>
           </article>
           <article className={styles.metricCard}>
-            <p>Important</p>
+            <p>Wichtig</p>
             <strong>{stats.summary.important}</strong>
           </article>
           <article className={`${styles.metricCard} ${styles.emphasis}`}>
-            <p>Streak Days</p>
+            <p>Tage in Folge</p>
             <strong>{stats.summary.streakDays}</strong>
           </article>
         </section>
 
         <section className={styles.boardGrid}>
           <article className={styles.panel}>
-            <h2>Open Tasks</h2>
+            <h2>Offene Aufgaben</h2>
             <table className={styles.statsTable}>
               <thead>
                 <tr>
-                  <th>Task</th>
-                  <th>Priority</th>
-                  <th>Due</th>
+                  <th>Aufgabe</th>
+                  <th>Priorität</th>
+                  <th>Fällig am</th>
                 </tr>
               </thead>
               <tbody>
@@ -224,7 +209,7 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
                   <tr key={task.title}>
                     <td>{task.title}</td>
                     <td>
-                      <span className={`${styles.badge} ${styles[task.priority.toLowerCase()]}`}>
+                      <span className={`${styles.badge} ${priorityClassMap[task.priority] || ''}`}>
                         {task.priority}
                       </span>
                     </td>
@@ -237,7 +222,7 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
 
           <article className={styles.panel}>
             <div className={styles.statusHeader}>
-              <h2>Status Breakdown</h2>
+              <h2>Status-Übersicht</h2>
 
               <div className={styles.menuWrapper} ref={menuRef}>
                 <button
@@ -279,21 +264,44 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
 
             {statusView === 'bars' ? (
               <div className={styles.statusBars}>
-                <StatusRow label="Finished" value={finishedPercent} colorClass="ok" />
-                <StatusRow label="In Progress" value={inProgressPercent} colorClass="danger" />
-                <StatusRow label="Important" value={importantPercent} colorClass="warn" />
+                <StatusRow label="Erledigt" value={finishedPercent} colorClass="ok" />
+                <StatusRow label="Offen" value={inProgressPercent} colorClass="danger" />
+                <StatusRow label="Wichtig" value={importantPercent} colorClass="warn" />
               </div>
             ) : (
-              <div className={styles.circleStats}>
-                <CircleStat label="Finished" value={finishedPercent} ringColorClass="ringOk" />
-                <CircleStat label="In Progress" value={inProgressPercent} ringColorClass="ringDanger" />
-                <CircleStat label="Important" value={importantPercent} ringColorClass="ringWarn" />
+              <div className={styles.donutContainer}>
+                <div
+                  className={styles.donutRing}
+                  style={{ '--finished-pct': `${finishedPercent}%` } as React.CSSProperties}
+                >
+                  <div className={styles.donutInner}>
+                    <div className={styles.donutTotal}>{stats.summary.totalTasks}</div>
+                    <div className={styles.donutLabel}>Gesamt</div>
+                  </div>
+                </div>
+                
+                <div className={styles.donutLegend}>
+                  <div className={styles.legendItem}>
+                    <div className={`${styles.legendColor} ${styles.legendOk}`}></div>
+                    <div className={styles.legendText}>
+                      <span>Erledigt</span>
+                      <small>{stats.summary.finished} Aufgaben ({finishedPercent}%)</small>
+                    </div>
+                  </div>
+                  <div className={styles.legendItem}>
+                    <div className={`${styles.legendColor} ${styles.legendDanger}`}></div>
+                    <div className={styles.legendText}>
+                      <span>Offen</span>
+                      <small>{stats.summary.inProgress} Aufgaben ({inProgressPercent}%)</small>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </article>
 
           <article className={styles.panel}>
-            <h2>Important Tasks</h2>
+            <h2>Wichtige Aufgaben</h2>
             <ul className={styles.importantList}>
               {stats.importantTasks.map((task) => (
                 <li key={task}>{task}</li>
@@ -302,7 +310,7 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
           </article>
 
           <article className={styles.panel}>
-            <h2>Weekly Completion</h2>
+            <h2>Wöchentlicher Fortschritt</h2>
             {stats.weeklyCompletion.map((item) => (
               <WeeklyRow key={item.day} day={item.day} done={item.done} total={item.total} />
             ))}

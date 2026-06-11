@@ -1,40 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TypeShit – Task Manager
 
-## Getting Started
+Eine webbasierte Aufgabenverwaltung, entwickelt im Rahmen des Kurses **Programmieren** an der DHBW.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+| Bereich | Technologie |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Sprache | TypeScript 5 |
+| UI | React 19 |
+| Styling | CSS Modules |
+| Persistenz | localStorage (clientseitig) |
+| Auth | Mock-Authentifizierung via Cookie + localStorage |
+
+## Features
+
+### Aufgabenverwaltung (CRUD)
+
+| Operation | Beschreibung |
+|---|---|
+| **Erstellen** | Neue Aufgabe mit Titel, Beschreibung, Priorität und Fälligkeitsdatum anlegen |
+| **Lesen** | Alle offenen und erledigten Aufgaben anzeigen |
+| **Bearbeiten** | Titel, Beschreibung, Priorität und Fälligkeitsdatum direkt in der Tabelle bearbeiten |
+| **Löschen** | Erledigte Aufgaben dauerhaft entfernen |
+| **Abschließen** | Aufgabe als erledigt markieren (mit Zeitstempel) |
+| **Wiederherstellen** | Erledigte Aufgabe zurück in offene Aufgaben verschieben |
+
+### Filter & Sortierung
+
+**Offene Aufgaben:**
+- Echtzeit-Suche nach Titel oder Beschreibung
+- Sortierung nach Fälligkeitsdatum (Standard)
+- Sortierung nach Priorität (Hoch → Mittel → Niedrig)
+
+**Erledigte Aufgaben:**
+- Sortierung nach Erledigungsdatum (neueste zuerst)
+
+### Statistiken
+
+- Gesamtanzahl, erledigte, offene und wichtige Aufgaben
+- Aufgaben der aktuellen Woche mit Tagesübersicht
+- Streak-Counter (aufeinanderfolgende Tage mit Abschlüssen)
+- Balken- oder Kreisdiagramm-Ansicht für Statusverteilung
+
+## Projektstruktur
+
+```
+src/
+├── app/
+│   ├── api/                    # API-Routen (geplant)
+│   ├── login/                  # Login-Seite
+│   ├── statistics/             # Statistik-Seite
+│   ├── components/             # Gemeinsame Komponenten
+│   ├── TaskPanel/              # Aufgabenverwaltung (State-Container)
+│   ├── OpenTask/               # Offene Aufgaben (Tabelle + Edit)
+│   ├── CloseTask/              # Erledigte Aufgaben (Tabelle + Delete)
+│   ├── layout.tsx              # Root-Layout mit AuthProvider
+│   ├── middleware.tsx           # Auth-Middleware (Route Guard)
+│   └── page.tsx                # Dashboard (Startseite)
+└── contexts/
+    └── AuthContext.tsx         # Auth-State und Login/Logout
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup & Ausführen
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Abhängigkeiten installieren
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Entwicklungsserver starten
+npm run dev
+```
 
-## Project Docs
+Die Anwendung ist dann unter [http://localhost:3000](http://localhost:3000) erreichbar.
 
-- [Statistics page documentation](docs/statistics.md)
+**Login:** Beliebige E-Mail-Adresse + Passwort (mind. 6 Zeichen)
 
-## Learn More
+## Dokumentation
 
-To learn more about Next.js, take a look at the following resources:
+- [Datenmodell](docs/data-model.md) – Ressourcen, Eigenschaften und Beziehungen
+- [API-Struktur](docs/api.md) – Geplante REST-Endpunkte mit Aktion, Methode, Input/Output
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+~README erstellt mit Claude
