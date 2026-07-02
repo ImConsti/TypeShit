@@ -82,4 +82,4 @@ Die Anwendung ist dann unter [http://localhost:3000](http://localhost:3000) erre
 - [API-Struktur](docs/api.md) – Geplante REST-Endpunkte mit Aktion, Methode, Input/Output
 
 
-~README erstellt mit Claude
+ERSTELLT MIT CLAUDE !!!
