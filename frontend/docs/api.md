@@ -24,9 +24,11 @@ Basis-URL: `/api`
 
 | Aktion | Methode | Endpunkt | Input | Output |
 |---|---|---|---|---|
+| Registrieren | `POST` | `/api/auth/register` | `{ email, password }` | `{ token, email }` (Status `201`) |
 | Einloggen | `POST` | `/api/auth/login` | `{ email, password }` | `{ token, email }` |
 | Ausloggen | `POST` | `/api/auth/logout` | `Authorization`-Header | `{ success: true }` |
 | Session prüfen | `GET` | `/api/auth/me` | `Authorization`-Header | `{ email, isAuthenticated }` |
+| Passwort zurücksetzen | `POST` | `/api/auth/reset-password` | `{ email }` | `{ success: true }` |
 
 ---
 
@@ -63,6 +65,40 @@ Basis-URL: `/api`
   "isDone": false,
   "doneAt": null,
   "pinned": false
+}
+```
+
+### Auth Register (Request)
+
+```json
+{
+  "email": "benutzer@beispiel.de",
+  "password": "sicheresPasswort"
+}
+```
+
+### Auth Register (Response)
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "email": "benutzer@beispiel.de"
+}
+```
+
+### Auth Reset-Password (Request)
+
+```json
+{
+  "email": "benutzer@beispiel.de"
+}
+```
+
+### Auth Reset-Password (Response)
+
+```json
+{
+  "success": true
 }
 ```
 
