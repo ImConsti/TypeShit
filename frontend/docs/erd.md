@@ -1,23 +1,25 @@
-# Entity-Relationship-Diagramm
+## DB-Schema
 
 ```mermaid
 erDiagram
-    USER {
-        string email PK
-        boolean isAuthenticated
+    USERS {
+        int id PK
+        string email UK
+        string passwordHash
+        timestamp createdAt
     }
 
-    TASK {
-        string id PK
+    TASKS {
+        int id PK
+        int userId FK
         string title
         string description
         string priority
-        string dueDate
+        date dueDate
         boolean isDone
-        string doneAt
+        timestamp doneAt
         boolean pinned
-        string userEmail FK
     }
 
-    USER ||--o{ TASK : "besitzt"
+    USERS ||--o{ TASKS : "besitzt (onDelete: cascade)"
 ```

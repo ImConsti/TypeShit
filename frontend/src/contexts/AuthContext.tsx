@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
+    // TODO: ersetzen durch GET /api/auth/me (Authorization-Header)
     const token = localStorage.getItem('auth_token');
     const storedEmail = localStorage.getItem('user_email');
     if (token) {
@@ -29,19 +30,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (emailInput: string, passwordInput: string) => {
+    // TODO: ersetzen durch POST /api/auth/login
     await new Promise(resolve => setTimeout(resolve, 800));
 
     if (emailInput && passwordInput.length >= 6) {
       const mockToken = 'mock-jwt-token-12345';
-      
+
+      // TODO: das token aus der /api/auth/login-Antwort
       localStorage.setItem('auth_token', mockToken);
       localStorage.setItem('user_email', emailInput);
-      
+
       document.cookie = `auth_token=${mockToken}; path=/`;
-      
+
       setIsAuthenticated(true);
       setEmail(emailInput);
-      
+
       router.push('/statistics');
     } else {
       throw new Error('E-Mail oder Passwort ist ungültig.');
@@ -49,19 +52,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register = async (emailInput: string, passwordInput: string) => {
+    // TODO: ersetzen durch POST /api/auth/register
     await new Promise(resolve => setTimeout(resolve, 800));
 
     if (emailInput && passwordInput.length >= 6) {
       const mockToken = 'mock-jwt-token-reg-12345';
-      
+
+      // TODO: den Token vom Backend speichern
       localStorage.setItem('auth_token', mockToken);
       localStorage.setItem('user_email', emailInput);
-      
+
       document.cookie = `auth_token=${mockToken}; path=/`;
-      
+
       setIsAuthenticated(true);
       setEmail(emailInput);
-      
+
       router.push('/statistics');
     } else {
       throw new Error('E-Mail ungültig oder Passwort zu kurz (min. 6 Zeichen).');
@@ -69,18 +74,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetPassword = async (emailInput: string) => {
+    // TODO: ersetzen durch POST /api/auth/reset-password
     await new Promise(resolve => setTimeout(resolve, 800));
-    
+
     if (!emailInput.includes('@')) {
       throw new Error('Bitte eine gültige E-Mail-Adresse eingeben.');
     }
   };
 
   const logout = () => {
+    // TODO: zusätzlich POST /api/auth/logout (Authorization-Header)
+    // gemäß api.md aufrufen, um die Session serverseitig zu invalidieren.
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_email');
     document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-    
+
     setIsAuthenticated(false);
     setEmail(null);
     router.push('/login');

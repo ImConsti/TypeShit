@@ -17,6 +17,7 @@ export default function TasksPanel() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
+    // TODO: ersetzen durch GET /api/tasks
     useEffect(() => {
         try {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -30,23 +31,27 @@ export default function TasksPanel() {
         }
     }, []);
 
+    // TODO: das komplett entfernen — sobald Tasks in DB sind
     useEffect(() => {
         if (!isLoaded) return;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
     }, [tasks, isLoaded]);
 
+    // TODO: ersetzen durch POST /api/tasks — Body:
+    // { title, description, priority, dueDate? }; die id wird vom Backend vergeben
     const handleAddTask = (newTaskData: Omit<OpenTaskItem, "id" | "pinned">) => {
         setTasks((prev) => [
-            { 
-                ...newTaskData, 
-                id: `t_${crypto.randomUUID()}`, 
-                isDone: false, 
-                pinned: false 
+            {
+                ...newTaskData,
+                id: `t_${crypto.randomUUID()}`,
+                isDone: false,
+                pinned: false
             },
             ...prev
         ]);
     };
 
+    // TODO: ersetzen durch PUT /api/tasks/:id
     const handleUpdate = (updatedTask: OpenTaskItem) => {
         setTasks((prev) =>
             prev.map((task) =>
@@ -57,14 +62,17 @@ export default function TasksPanel() {
         );
     };
 
+    // TODO: ersetzen durch PATCH /api/tasks/:id/complete (isDone)
+    // bzw. PATCH /api/tasks/:id/restore (!isDone) gemäß api.md — kein generisches PATCH.
     const toggleTask = (id: string, isDone: boolean) => {
         const timeStr = isDone ? new Date().toISOString() : undefined;
 
-        setTasks((prev) => prev.map((t) => 
+        setTasks((prev) => prev.map((t) =>
             t.id === id ? { ...t, isDone, doneAt: timeStr } : t
         ));
     };
 
+    // TODO: ersetzen durch DELETE /api/tasks/:id
     const removeTask = (id: string) => setTasks((prev) => prev.filter((t) => t.id !== id));
 
     const openTasksForUI: OpenTaskItem[] = tasks.filter((t) => !t.isDone);
