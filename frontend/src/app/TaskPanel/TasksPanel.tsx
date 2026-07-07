@@ -63,7 +63,6 @@ export default function TasksPanel() {
     };
 
     // TODO: ersetzen durch PATCH /api/tasks/:id/complete (isDone)
-    // bzw. PATCH /api/tasks/:id/restore (!isDone) gemäß api.md — kein generisches PATCH.
     const toggleTask = (id: string, isDone: boolean) => {
         const timeStr = isDone ? new Date().toISOString() : undefined;
 

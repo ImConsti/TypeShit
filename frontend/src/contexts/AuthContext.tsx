@@ -84,7 +84,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     // TODO: zusätzlich POST /api/auth/logout (Authorization-Header)
-    // gemäß api.md aufrufen, um die Session serverseitig zu invalidieren.
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_email');
     document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
