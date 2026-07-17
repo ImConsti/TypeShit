@@ -12,6 +12,7 @@ export type Task = OpenTaskItem & {
 };
 
 const STORAGE_KEY = "task-manager-tasks";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 export default function TasksPanel() {
     const [tasks, setTasks] = useState<Task[]>([]);
@@ -51,7 +52,6 @@ export default function TasksPanel() {
         ]);
     };
 
-    // TODO: ersetzen durch PUT /api/tasks/:id
     const handleUpdate = (updatedTask: OpenTaskItem) => {
         setTasks((prev) =>
             prev.map((task) =>
@@ -60,19 +60,51 @@ export default function TasksPanel() {
                     : task
             )
         );
+
+        fetch(`${API_BASE}/api/tasks/${updatedTask.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                title: updatedTask.title,
+                description: updatedTask.description,
+                priority: updatedTask.priority,
+                dueDate: updatedTask.dueDate,
+                pinned: updatedTask.pinned,
+            }),
+        }).catch((error) => console.error("Failed to update task on server", error));
     };
 
-    // TODO: ersetzen durch PATCH /api/tasks/:id/complete (isDone)
     const toggleTask = (id: string, isDone: boolean) => {
         const timeStr = isDone ? new Date().toISOString() : undefined;
 
         setTasks((prev) => prev.map((t) =>
             t.id === id ? { ...t, isDone, doneAt: timeStr } : t
         ));
+
+        fetch(`${API_BASE}/api/tasks/${id}/complete`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isDone }),
+        }).catch((error) => console.error("Failed to update task completion on server", error));
     };
 
-    // TODO: ersetzen durch DELETE /api/tasks/:id
-    const removeTask = (id: string) => setTasks((prev) => prev.filter((t) => t.id !== id));
+    const removeTask = (id: string) => {
+        setTasks((prev) => prev.filter((t) => t.id !== id));
+
+        fetch(`${API_BASE}/api/tasks/${id}`, {
+            method: "DELETE",
+        }).catch((error) => console.error("Failed to delete task on server", error));
+    };
+
+    const testBackend = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/health/db`);
+            const data = await res.json();
+            console.log("Backend + DB OK:", data);
+        } catch (error) {
+            console.error("Backend + DB check failed:", error);
+        }
+    };
 
     const openTasksForUI: OpenTaskItem[] = tasks.filter((t) => !t.isDone);
     
@@ -86,6 +118,7 @@ export default function TasksPanel() {
 
     return (
         <div className={styles.page}>
+            <button onClick={testBackend}>Test Backend + DB</button>
             <TaskInput onAddTask={handleAddTask} />
             <OpenTask tasks={openTasksForUI} onUpdate={handleUpdate} onComplete={(id) => toggleTask(id, true)} onRemove={removeTask} />
             <CloseTask doneTasks={doneTasksForUI} onRestore={(id) => toggleTask(id, false)} onRemove={removeTask} />
