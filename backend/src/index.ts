@@ -116,6 +116,20 @@ app.patch('/api/tasks/:id/complete', async (req, res) => {
   res.json({ message: isDone ? 'Task marked as done!' : 'Task marked as open!' });
 });
 
+app.patch('/api/users/:id/promote', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    await db.update(users)
+      .set({ role: 'admin' })
+      .where(eq(users.id, id));
+
+    res.json({ message: `User mit ID ${id} wurde zum Admin befördert.` });
+  } catch (error) {
+    res.status(500).json({ error: 'Beförderung fehlgeschlagen' });
+  }
+});
+
 app.delete('/api/tasks/:id', async (req, res) => {
   const id = Number(req.params.id);
   await db.delete(tasks).where(eq(tasks.id, id));
