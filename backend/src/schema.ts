@@ -4,8 +4,9 @@ export const priorityEnum = pgEnum('priority', ['Hoch', 'Mittel', 'Niedrig']);
 
 export const users = pgTable('users', {
   id: serial().primaryKey(),
-  email: text().notNull().unique(),
-  passwordHash: text().notNull(),
+  email: text('email').notNull().unique(),
+  passwordHash: text('password').notNull(),
+  role: text('role').notNull().default('user').notNull(),
   createdAt: timestamp().notNull().defaultNow(),
 });
 
@@ -22,3 +23,4 @@ export const tasks = pgTable('tasks', {
   doneAt: timestamp(),
   pinned: boolean().notNull().default(false),
 });
+
