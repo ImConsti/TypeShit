@@ -150,7 +150,7 @@
 }
 
 .table thead th.colTask {
-    padding-left: 40px;
+    padding-left: 20px;
 }
 
 .table thead th.colPrio {
@@ -192,21 +192,8 @@
     vertical-align: middle;
 }
 
-.taskLabel {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    line-height: 1.4;
-    width: 100%;
-}
-
-.checkbox {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    margin-left: -20px;
-    flex-shrink: 0;
-    accent-color: var(--primary-color);
+.taskCell {
+    padding-left: 40px;
 }
 
 .taskText {

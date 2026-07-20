@@ -201,17 +201,9 @@ export default function OpenTask({ tasks, onComplete, onUpdate, onRemove }: Prop
                                                 }
                                             />
                                         ) : (
-                                            <label className={styles.taskLabel}>
-                                                <input
-                                                    className={styles.checkbox}
-                                                    type="checkbox"
-                                                    aria-label="Aufgabe markieren"
-                                                    onChange={() => onComplete(t.id)}
-                                                />
-                                                <div className={styles.taskText}>
-                                                    <div className={styles.taskTitle}>{t.title}</div>
-                                                </div>
-                                            </label>
+                                            <div className={styles.taskText}>
+                                                <div className={styles.taskTitle}>{t.title}</div>
+                                            </div>
                                         )}
                                     </td>
 

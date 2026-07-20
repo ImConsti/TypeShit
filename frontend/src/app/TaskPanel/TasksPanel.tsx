@@ -109,16 +109,6 @@ export default function TasksPanel() {
         }).catch((error) => console.error("Failed to delete task on server", error));
     };
 
-    const testBackend = async () => {
-        try {
-            const res = await fetch(`${API_BASE}/health/db`);
-            const data = await res.json();
-            console.log("Backend + DB OK:", data);
-        } catch (error) {
-            console.error("Backend + DB check failed:", error);
-        }
-    };
-
     const openTasksForUI: OpenTaskItem[] = tasks.filter((t) => !t.isDone);
     
     const doneTasksForUI: DoneTaskItem[] = tasks.filter((t) => t.isDone).map((t) => ({
@@ -130,7 +120,6 @@ export default function TasksPanel() {
 
     return (
         <div className={styles.page}>
-            <button onClick={testBackend}>Test Backend + DB</button>
             <TaskInput onAddTask={handleAddTask} />
             <OpenTask tasks={openTasksForUI} onUpdate={handleUpdate} onComplete={(id) => toggleTask(id, true)} onRemove={removeTask} />
             <CloseTask doneTasks={doneTasksForUI} onRestore={(id) => toggleTask(id, false)} onRemove={removeTask} />
