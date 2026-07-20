@@ -11,69 +11,103 @@ export type Task = OpenTaskItem & {
     doneAt?: string;
 };
 
-const STORAGE_KEY = "task-manager-tasks";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 export default function TasksPanel() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    // TODO: ersetzen durch GET /api/tasks
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                setTasks(JSON.parse(stored));
-            }
-        } catch (error) {
-            console.error("Failed to parse tasks from localStorage", error);
-        } finally {
-            setIsLoaded(true);
-        }
+        const token = localStorage.getItem("auth_token");
+        fetch(`${API_BASE}/api/tasks`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok || !Array.isArray(data)) {
+                    console.error("Failed to fetch tasks from server", data);
+                    setTasks([]);
+                    setIsLoaded(true);
+                    return;
+                }
+                setTasks(data);
+                setIsLoaded(true);
+            })
+            .catch((error) => {
+                console.error("Failed to fetch tasks from server", error);
+                setIsLoaded(true);
+            });
+
     }, []);
 
-    // TODO: das komplett entfernen — sobald Tasks in DB sind
-    useEffect(() => {
-        if (!isLoaded) return;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    }, [tasks, isLoaded]);
+    const handleAddTask = async (newTaskData: Omit<OpenTaskItem, "id">) => {
+        try {
+            const token= localStorage.getItem("auth_token");
+            const response = await fetch(`${API_BASE}/api/tasks`, {
+                method : "POST", 
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`},
+                body: JSON.stringify(newTaskData),
+            });
 
-    // TODO: ersetzen durch POST /api/tasks — Body:
-    // { title, description, priority, dueDate? }; die id wird vom Backend vergeben
-    const handleAddTask = (newTaskData: Omit<OpenTaskItem, "id" | "pinned">) => {
-        setTasks((prev) => [
-            {
-                ...newTaskData,
-                id: `t_${crypto.randomUUID()}`,
-                isDone: false,
-                pinned: false
-            },
-            ...prev
-        ]);
+            if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        const savedTask: Task= await response.json();
+        setTasks((prev) => [savedTask, ...prev])
+        } 
+        catch (error: unknown) {
+            console.error("Failed to add task to server", error);
+        }
+        
     };
 
-    // TODO: ersetzen durch PUT /api/tasks/:id
     const handleUpdate = (updatedTask: OpenTaskItem) => {
-        setTasks((prev) =>
+        setTasks((prev) => 
             prev.map((task) =>
                 task.id === updatedTask.id
                     ? { ...task, ...updatedTask }
                     : task
             )
         );
+
+        const token = localStorage.getItem("auth_token");
+        fetch(`${API_BASE}/api/tasks/${updatedTask.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({
+                title: updatedTask.title,
+                description: updatedTask.description,
+                priority: updatedTask.priority,
+                dueDate: updatedTask.dueDate,
+            }),
+        }).catch((error) => console.error("Failed to update task on server", error));
     };
 
-    // TODO: ersetzen durch PATCH /api/tasks/:id/complete (isDone)
-    // bzw. PATCH /api/tasks/:id/restore (!isDone) gemäß api.md — kein generisches PATCH.
     const toggleTask = (id: string, isDone: boolean) => {
         const timeStr = isDone ? new Date().toISOString() : undefined;
 
         setTasks((prev) => prev.map((t) =>
             t.id === id ? { ...t, isDone, doneAt: timeStr } : t
         ));
+
+        const token = localStorage.getItem("auth_token");
+        fetch(`${API_BASE}/api/tasks/${id}/complete`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ isDone }),
+        }).catch((error) => console.error("Failed to update task completion on server", error));
     };
 
-    // TODO: ersetzen durch DELETE /api/tasks/:id
-    const removeTask = (id: string) => setTasks((prev) => prev.filter((t) => t.id !== id));
+    const removeTask = (id: string) => {
+        setTasks((prev) => prev.filter((t) => t.id !== id));
+
+        const token = localStorage.getItem("auth_token");
+        fetch(`${API_BASE}/api/tasks/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+        }).catch((error) => console.error("Failed to delete task on server", error));
+    };
 
     const openTasksForUI: OpenTaskItem[] = tasks.filter((t) => !t.isDone);
     
@@ -81,8 +115,7 @@ export default function TasksPanel() {
         id: t.id,
         title: t.title,
         description: t.description,
-        doneAt: t.doneAt!, 
-        pinned: t.pinned
+        doneAt: t.doneAt!,
     }));
 
     return (

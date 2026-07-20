@@ -10,7 +10,6 @@ export type DoneTaskItem = {
     title: string;
     description: string;
     doneAt: string;
-    pinned?: boolean;
 };
 
 type SortDone = "Erledigt am";
