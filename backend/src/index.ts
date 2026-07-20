@@ -10,6 +10,25 @@ const app = express();
 const PORT = 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'typeshit-super-secret-jwt-key';
 
+export interface AuthRequest extends express.Request {
+  user?: { userId: number; email: string; role: string };
+}
+
+const authenticateToken = (req: AuthRequest, res: express.Response, next: express.NextFunction) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.status(401);
+
+  jwt.verify(token, JWT_SECRET, (err, decodedUser) => {
+    if (err) {
+      return res.status(403).json({ error: 'Forbidden Token' });
+    }
+    req.user = decodedUser as { userId: number; email: string; role: string };
+    next();
+  });
+};
+
 app.use(express.json());
 
 app.use((_req, res, next) => {
@@ -134,6 +153,47 @@ app.delete('/api/tasks/:id', async (req, res) => {
   const id = Number(req.params.id);
   await db.delete(tasks).where(eq(tasks.id, id));
   res.json({ message: 'Task deleted!' });
+});
+
+app.get('/api/tasks', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    const userId = req.user!.userId;
+    const userTasks = await db.select().from(tasks).where(eq(tasks.userId, userId));
+    res.json(userTasks);
+  } catch (error) {
+    res.status(500).json({ error: 'Serverfehler' });
+  }
+});
+// Hier muss ich in die post route noch die Validierung vom Datum einbauen! 
+app.post('/api/tasks', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    const {title, description, priority, dueDate } = req.body;
+    const userId = req.user!.userId;
+    const validPriorities = ['Hoch', 'Mittel', 'Niedrig'];
+
+    if (typeof title !== 'string' || !title || title.length > 300 || title.trim() === '') {
+      return res.status(400).json({ error: 'Ungültiger Titel' });
+    }
+
+    if (description && (description.length > 5000 || typeof description !== 'string')) {
+      return res.status(400).json({ error: 'Beschreibung zu lang' });
+    }
+
+    if (!validPriorities.includes(priority)) {
+      return res.status(400).json({ error: 'Ungültige Priorität' });
+    }
+    
+    const newTask = await db.insert(tasks).values({
+      title: title.trim(),
+      description: description ? description.trim() : '',
+      priority,
+      dueDate,
+      userId
+    }).returning();
+    res.status(201).json(newTask[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Serverfehler' });
+  }
 });
 
 app.listen(PORT, () => {

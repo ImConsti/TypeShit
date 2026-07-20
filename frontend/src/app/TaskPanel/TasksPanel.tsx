@@ -20,40 +20,46 @@ export default function TasksPanel() {
 
     // TODO: ersetzen durch GET /api/tasks
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                setTasks(JSON.parse(stored));
-            }
-        } catch (error) {
-            console.error("Failed to parse tasks from localStorage", error);
-        } finally {
-            setIsLoaded(true);
-        }
-    }, []);
+        const token = localStorage.getItem("auth_token");
+        fetch(`${API_BASE}/api/tasks`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then((res) => res.json())
+            .then((data) => { setTasks(data); setIsLoaded(true); })
 
-    // TODO: das komplett entfernen — sobald Tasks in DB sind
-    useEffect(() => {
-        if (!isLoaded) return;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    }, [tasks, isLoaded]);
+            .catch((error) => {
+                console.error("Failed to fetch tasks from server", error);
+                setIsLoaded(true);
+            });
+
+    }, []);
 
     // TODO: ersetzen durch POST /api/tasks — Body:
     // { title, description, priority, dueDate? }; die id wird vom Backend vergeben
-    const handleAddTask = (newTaskData: Omit<OpenTaskItem, "id" | "pinned">) => {
-        setTasks((prev) => [
-            {
-                ...newTaskData,
-                id: `t_${crypto.randomUUID()}`,
-                isDone: false,
-                pinned: false
-            },
-            ...prev
-        ]);
+    const handleAddTask = async (newTaskData: Omit<OpenTaskItem, "id" | "pinned">) => {
+        try {
+            const token= localStorage.getItem("auth_token");
+            const response = await fetch(`${API_BASE}/api/tasks`, {
+                method : "POST", 
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`},
+                body: JSON.stringify(newTaskData),
+            });
+
+            if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        const savedTask: Task= await response.json();
+        setTasks((prev) => [savedTask, ...prev])
+        } 
+        catch (error: unknown) {
+            console.error("Failed to add task to server", error);
+        }
+        
     };
 
     const handleUpdate = (updatedTask: OpenTaskItem) => {
-        setTasks((prev) =>
+        setTasks((prev) => 
             prev.map((task) =>
                 task.id === updatedTask.id
                     ? { ...task, ...updatedTask }

@@ -1,4 +1,4 @@
-import { pgTable, serial, text, boolean, date, timestamp, pgEnum, integer } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, boolean, date, timestamp, pgEnum, integer, varchar } from 'drizzle-orm/pg-core';
 
 export const priorityEnum = pgEnum('priority', ['Hoch', 'Mittel', 'Niedrig']);
 
@@ -15,8 +15,8 @@ export const tasks = pgTable('tasks', {
   userId: integer()
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  title: text().notNull(),
-  description: text().notNull().default(''),
+  title: varchar('title', { length: 300 }).notNull(),
+  description: varchar('description', { length: 5000 }).notNull().default(''),
   priority: priorityEnum().notNull(),
   dueDate: date(),
   isDone: boolean().notNull().default(false),

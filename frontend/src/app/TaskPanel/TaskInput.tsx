@@ -21,11 +21,11 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
         const cleanTitle = title.trim();
         const cleanDescription = description.trim();
 
-        if (!cleanTitle || cleanTitle.length > 200) return;
+        if (!cleanTitle || cleanTitle.length > 300 || cleanTitle === "") return;
 
         onAddTask({
             title: cleanTitle,
-            description: cleanDescription.length > 500 ? cleanDescription.slice(0, 500) : cleanDescription,
+            description: cleanDescription.length > 5000 ? cleanDescription.slice(0, 5000) : cleanDescription,
             priority,
             dueDate: dueDate ? dueDate : undefined,
         });
@@ -50,11 +50,11 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         required
-                        maxLength={200}
+                        maxLength={300}
                         className={`${styles.inputField} ${styles.inputTitle}`}
                     />
-                    <span className={`${styles.counter} ${title.length >= 190 ? styles.warning : ""}`}>
-                        {title.length}/200
+                    <span className={`${styles.counter} ${title.length >= 290 ? styles.warning : ""}`}>
+                        {title.length}/300
                     </span>
                 </div>
                 
@@ -64,11 +64,11 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
                         placeholder="Beschreibung..."
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        maxLength={500}
+                        maxLength={5000}
                         className={`${styles.inputField} ${styles.inputDesc}`}
                     />
-                    <span className={`${styles.counter} ${description.length >= 480 ? styles.warning : ""}`}>
-                        {description.length}/500
+                    <span className={`${styles.counter} ${description.length >= 4980 ? styles.warning : ""}`}>
+                        {description.length}/5000
                     </span>
                 </div>
                 
