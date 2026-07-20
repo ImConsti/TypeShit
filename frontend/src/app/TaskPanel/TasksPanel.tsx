@@ -11,14 +11,12 @@ export type Task = OpenTaskItem & {
     doneAt?: string;
 };
 
-const STORAGE_KEY = "task-manager-tasks";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 export default function TasksPanel() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    // TODO: ersetzen durch GET /api/tasks
     useEffect(() => {
         const token = localStorage.getItem("auth_token");
         fetch(`${API_BASE}/api/tasks`, {
@@ -42,8 +40,6 @@ export default function TasksPanel() {
 
     }, []);
 
-    // TODO: ersetzen durch POST /api/tasks — Body:
-    // { title, description, priority, dueDate? }; die id wird vom Backend vergeben
     const handleAddTask = async (newTaskData: Omit<OpenTaskItem, "id">) => {
         try {
             const token= localStorage.getItem("auth_token");
