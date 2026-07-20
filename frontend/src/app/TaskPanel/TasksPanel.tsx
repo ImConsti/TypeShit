@@ -75,9 +75,10 @@ export default function TasksPanel() {
             )
         );
 
+        const token = localStorage.getItem("auth_token");
         fetch(`${API_BASE}/api/tasks/${updatedTask.id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({
                 title: updatedTask.title,
                 description: updatedTask.description,
@@ -94,9 +95,10 @@ export default function TasksPanel() {
             t.id === id ? { ...t, isDone, doneAt: timeStr } : t
         ));
 
+        const token = localStorage.getItem("auth_token");
         fetch(`${API_BASE}/api/tasks/${id}/complete`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({ isDone }),
         }).catch((error) => console.error("Failed to update task completion on server", error));
     };
@@ -104,8 +106,10 @@ export default function TasksPanel() {
     const removeTask = (id: string) => {
         setTasks((prev) => prev.filter((t) => t.id !== id));
 
+        const token = localStorage.getItem("auth_token");
         fetch(`${API_BASE}/api/tasks/${id}`, {
             method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
         }).catch((error) => console.error("Failed to delete task on server", error));
     };
 
