@@ -56,25 +56,24 @@ app.get('/health/db', async (_req, res) => {
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
-
     if (!email || !password || password.length < 6) {
       return res.status(400).json({ error: 'Ungueltige Eingaben' });
     }
-
     const hashed = await bcrypt.hash(password, 10);
-
     const newUser = await db.insert(users).values({
       email,
       passwordHash: hashed,
     }).returning();
-
+    
     const token = jwt.sign(
       { userId: newUser[0].id, email: newUser[0].email, role: newUser[0].role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
-
-    res.status(201).json({ token, email });
+    
+    // HIER das , role: newUser[0].role ergänzen:
+    res.status(201).json({ token, email, role: newUser[0].role });
+    
   } catch (error: any) {
     if (error.code === '23505') {
       return res.status(400).json({ error: 'E-Mail existiert bereits' });
@@ -105,7 +104,7 @@ app.post('/api/auth/login', async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    res.status(200).json({ token, email });
+    res.status(200).json({ token, email, role: user.role });
   } catch (error) {
     res.status(500).json({ error: 'Serverfehler' });
   }
