@@ -193,17 +193,33 @@ app.patch('/api/tasks/:id/complete', authenticateToken, async (req: AuthRequest,
   }
 });
 
-app.patch('/api/users/:id/promote', async (req, res) => {
+app.patch('/api/users/:id/promote', authenticateToken, async (req: AuthRequest, res: express.Response) => {
   try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ error: 'Zugriff verweigert' });
+    }
     const id = Number(req.params.id);
-
-    await db.update(users)
-      .set({ role: 'admin' })
-      .where(eq(users.id, id));
-
-    res.json({ message: `User mit ID ${id} wurde zum Admin befördert.` });
+    await db.update(users).set({ role: 'admin' }).where(eq(users.id, id));
+    res.json({ message: `User mit ID ${id} wurde zum Admin befoerdert.` });
   } catch (error) {
-    res.status(500).json({ error: 'Beförderung fehlgeschlagen' });
+    res.status(500).json({ error: 'Befoerderung fehlgeschlagen' });
+  }
+});
+
+app.get('/api/users', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ error: 'Zugriff verweigert' });
+    }
+    const allUsers = await db.select({
+      id: users.id,
+      email: users.email,
+      role: users.role,
+      createdAt: users.createdAt
+    }).from(users);
+    res.status(200).json(allUsers);
+  } catch (error) {
+    res.status(500).json({ error: 'Serverfehler' });
   }
 });
 
