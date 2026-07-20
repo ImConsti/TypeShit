@@ -10,7 +10,6 @@ export type DoneTaskItem = {
     title: string;
     description: string;
     doneAt: string;
-    pinned?: boolean;
 };
 
 type SortDone = "Erledigt am";
@@ -72,7 +71,6 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
                     <table className={styles.table}>
                         <thead>
                         <tr>
-                            <th className={styles.colPin} aria-label="Pin" />
                             <th className={styles.colTask}>Aufgabe</th>
                             <th className={styles.colDesc}>Beschreibung</th>
                             <th className={styles.colDoneAt}>Erledigt am</th>
@@ -83,10 +81,6 @@ export default function CloseTask({ doneTasks, onRemove, onRestore }: CloseTaskP
                         <tbody>
                         {sortedDone.map((t) => (
                             <tr key={t.id}>
-                                <td className={styles.pinCell}>
-                                    <span className={styles.pin} aria-hidden>📌</span>
-                                </td>
-
                                 <td className={styles.taskCell}>
                                     <div className={styles.taskText}>
                                         <div className={`${styles.taskTitle} ${styles.strike}`}>{t.title}</div>

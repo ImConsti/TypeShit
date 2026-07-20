@@ -174,23 +174,11 @@
     color: var(--text-main);
 }
 
-.colPin { width: 44px; }
 .colTask { width: 30%; }
 .colDesc { width: 35%; }
 .colPrio { width: 120px; }
 .colDue { width: 130px; }
 .colActions { width: 140px; }
-
-.pinCell {
-    text-align: center;
-}
-
-.pin {
-    font-size: 1.1rem;
-    display: inline-block;
-    transform: rotate(-20deg);
-    vertical-align: middle;
-}
 
 .taskLabel {
     display: flex;

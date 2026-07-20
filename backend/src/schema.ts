@@ -21,6 +21,5 @@ export const tasks = pgTable('tasks', {
   dueDate: date(),
   isDone: boolean().notNull().default(false),
   doneAt: timestamp(),
-  pinned: boolean().notNull().default(false),
 });
 

@@ -5,7 +5,7 @@ import styles from "./TaskInput.module.css";
 import type { Priority, OpenTaskItem } from "@/src/app/OpenTask/OpenTask";
 
 type TaskInputProps = {
-    onAddTask: (task: Omit<OpenTaskItem, "id" | "pinned">) => void;
+    onAddTask: (task: Omit<OpenTaskItem, "id">) => void;
 };
 
 export default function TaskInput({ onAddTask }: TaskInputProps) {

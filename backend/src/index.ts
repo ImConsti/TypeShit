@@ -18,7 +18,7 @@ const authenticateToken = (req: AuthRequest, res: express.Response, next: expres
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.status(401);
+  if (!token) return res.status(401).json({ error: 'Kein Token vorhanden' });
 
   jwt.verify(token, JWT_SECRET, (err, decodedUser) => {
     if (err) {
@@ -121,18 +121,76 @@ app.post('/api/auth/reset-password', (req, res) => {
   res.status(200).json({ success: true });
 });
 
-app.put('/api/tasks/:id', async (req, res) => {
-  const id = Number(req.params.id);
-  const { title, description, priority, dueDate, pinned } = req.body;
-  await db.update(tasks).set({ title, description, priority, dueDate, pinned }).where(eq(tasks.id, id));
-  res.json({ message: 'Task updated!' });
+app.put('/api/tasks/:id', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    const id = Number(req.params.id);
+    const userId = req.user!.userId;
+    const { title, description, priority, dueDate } = req.body;
+    const validPriorities = ['Hoch', 'Mittel', 'Niedrig'];
+
+    if (!Number.isInteger(id)) {
+      return res.status(400).json({ error: 'Ungültige Task-ID' });
+    }
+
+    if (typeof title !== 'string' || !title || title.length > 300 || title.trim() === '') {
+      return res.status(400).json({ error: 'Ungültiger Titel' });
+    }
+
+    if (description && (description.length > 5000 || typeof description !== 'string')) {
+      return res.status(400).json({ error: 'Beschreibung zu lang' });
+    }
+
+    if (!validPriorities.includes(priority)) {
+      return res.status(400).json({ error: 'Ungültige Priorität' });
+    }
+
+    const existing = await db.select().from(tasks).where(eq(tasks.id, id));
+    if (!existing[0]) {
+      return res.status(404).json({ error: 'Task nicht gefunden' });
+    }
+    if (existing[0].userId !== userId) {
+      return res.status(403).json({ error: 'Kein Zugriff auf diese Task' });
+    }
+
+    await db.update(tasks).set({
+      title: title.trim(),
+      description: description ? description.trim() : '',
+      priority,
+      dueDate
+    }).where(eq(tasks.id, id));
+    res.json({ message: 'Task updated!' });
+  } catch (error) {
+    res.status(500).json({ error: 'Serverfehler' });
+  }
 });
 
-app.patch('/api/tasks/:id/complete', async (req, res) => {
-  const id = Number(req.params.id);
-  const { isDone } = req.body;
-  await db.update(tasks).set({ isDone, doneAt: isDone ? new Date() : null }).where(eq(tasks.id, id));
-  res.json({ message: isDone ? 'Task marked as done!' : 'Task marked as open!' });
+app.patch('/api/tasks/:id/complete', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    const id = Number(req.params.id);
+    const userId = req.user!.userId;
+    const { isDone } = req.body;
+
+    if (!Number.isInteger(id)) {
+      return res.status(400).json({ error: 'Ungültige Task-ID' });
+    }
+
+    if (typeof isDone !== 'boolean') {
+      return res.status(400).json({ error: 'Ungültiger isDone-Wert' });
+    }
+
+    const existing = await db.select().from(tasks).where(eq(tasks.id, id));
+    if (!existing[0]) {
+      return res.status(404).json({ error: 'Task nicht gefunden' });
+    }
+    if (existing[0].userId !== userId) {
+      return res.status(403).json({ error: 'Kein Zugriff auf diese Task' });
+    }
+
+    await db.update(tasks).set({ isDone, doneAt: isDone ? new Date() : null }).where(eq(tasks.id, id));
+    res.json({ message: isDone ? 'Task marked as done!' : 'Task marked as open!' });
+  } catch (error) {
+    res.status(500).json({ error: 'Serverfehler' });
+  }
 });
 
 app.patch('/api/users/:id/promote', async (req, res) => {
@@ -149,10 +207,28 @@ app.patch('/api/users/:id/promote', async (req, res) => {
   }
 });
 
-app.delete('/api/tasks/:id', async (req, res) => {
-  const id = Number(req.params.id);
-  await db.delete(tasks).where(eq(tasks.id, id));
-  res.json({ message: 'Task deleted!' });
+app.delete('/api/tasks/:id', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    const id = Number(req.params.id);
+    const userId = req.user!.userId;
+
+    if (!Number.isInteger(id)) {
+      return res.status(400).json({ error: 'Ungültige Task-ID' });
+    }
+
+    const existing = await db.select().from(tasks).where(eq(tasks.id, id));
+    if (!existing[0]) {
+      return res.status(404).json({ error: 'Task nicht gefunden' });
+    }
+    if (existing[0].userId !== userId) {
+      return res.status(403).json({ error: 'Kein Zugriff auf diese Task' });
+    }
+
+    await db.delete(tasks).where(eq(tasks.id, id));
+    res.json({ message: 'Task deleted!' });
+  } catch (error) {
+    res.status(500).json({ error: 'Serverfehler' });
+  }
 });
 
 app.get('/api/tasks', authenticateToken, async (req: AuthRequest, res: express.Response) => {

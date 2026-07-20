@@ -13,7 +13,6 @@ export type OpenTaskItem = {
     description: string;
     priority: Priority;
     dueDate?: string;
-    pinned?: boolean;
 };
 
 type SortOpen = "Fällig am" | "Priorität";
@@ -161,7 +160,6 @@ export default function OpenTask({ tasks, onComplete, onUpdate, onRemove }: Prop
                     <table className={styles.table}>
                         <thead>
                         <tr>
-                            <th className={styles.colPin} aria-label="Pin" />
                             <th className={styles.colTask}>Aufgabe</th>
                             <th className={styles.colDesc}>Beschreibung</th>
                             <th className={styles.colPrio}>Priorität</th>
@@ -187,10 +185,6 @@ export default function OpenTask({ tasks, onComplete, onUpdate, onRemove }: Prop
                             
                             return (
                                 <tr key={t.id} className={rowClass}>
-                                    <td className={styles.pinCell}>
-                                        <span className={styles.pin} aria-hidden>📌</span>
-                                    </td>
-
                                     <td className={styles.taskCell}>
                                         {isEditing && editValues ? (
                                             <input

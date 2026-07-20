@@ -15,6 +15,13 @@
       "when": 1784465384266,
       "tag": "0001_violet_nightmare",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784574990946,
+      "tag": "0002_striped_genesis",
+      "breakpoints": true
     }
   ]
 }

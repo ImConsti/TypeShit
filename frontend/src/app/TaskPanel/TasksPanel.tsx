@@ -24,9 +24,17 @@ export default function TasksPanel() {
         fetch(`${API_BASE}/api/tasks`, {
             headers: { Authorization: `Bearer ${token}` }
         })
-            .then((res) => res.json())
-            .then((data) => { setTasks(data); setIsLoaded(true); })
-
+            .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok || !Array.isArray(data)) {
+                    console.error("Failed to fetch tasks from server", data);
+                    setTasks([]);
+                    setIsLoaded(true);
+                    return;
+                }
+                setTasks(data);
+                setIsLoaded(true);
+            })
             .catch((error) => {
                 console.error("Failed to fetch tasks from server", error);
                 setIsLoaded(true);
@@ -36,7 +44,7 @@ export default function TasksPanel() {
 
     // TODO: ersetzen durch POST /api/tasks — Body:
     // { title, description, priority, dueDate? }; die id wird vom Backend vergeben
-    const handleAddTask = async (newTaskData: Omit<OpenTaskItem, "id" | "pinned">) => {
+    const handleAddTask = async (newTaskData: Omit<OpenTaskItem, "id">) => {
         try {
             const token= localStorage.getItem("auth_token");
             const response = await fetch(`${API_BASE}/api/tasks`, {
@@ -75,7 +83,6 @@ export default function TasksPanel() {
                 description: updatedTask.description,
                 priority: updatedTask.priority,
                 dueDate: updatedTask.dueDate,
-                pinned: updatedTask.pinned,
             }),
         }).catch((error) => console.error("Failed to update task on server", error));
     };
@@ -118,8 +125,7 @@ export default function TasksPanel() {
         id: t.id,
         title: t.title,
         description: t.description,
-        doneAt: t.doneAt!, 
-        pinned: t.pinned
+        doneAt: t.doneAt!,
     }));
 
     return (
