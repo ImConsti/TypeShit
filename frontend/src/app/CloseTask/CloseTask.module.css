@@ -112,10 +112,20 @@
     border-bottom: none;
 }
 
+.colPin { width: 44px; }
 .colTask { width: 32%; }
 .colDesc { width: 34%; }
 .colDoneAt { width: 190px; }
 .colActions { width: 150px; }
+
+.pinCell { text-align: center; opacity: 0.5; }
+
+.pin {
+    font-size: 1.1rem;
+    display: inline-block;
+    transform: rotate(-20deg);
+    vertical-align: middle;
+}
 
 .taskText {
     display: flex;
