@@ -29,6 +29,74 @@ const authenticateToken = (req: AuthRequest, res: express.Response, next: expres
   });
 };
 
+const APP_TIME_ZONE = 'Europe/Berlin';
+const WEEKDAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] as const;
+
+
+function dateKeyInTimeZone(date: Date): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: APP_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+
+  const year = parts.find((part) => part.type === 'year')?.value;
+  const month = parts.find((part) => part.type === 'month')?.value;
+  const day = parts.find((part) => part.type === 'day')?.value;
+
+  if (!year || !month || !day) {
+    throw new Error('Datum konnte nicht formatiert werden');
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function parseDateKey(dateKey: string): Date {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function addUtcDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setUTCDate(result.getUTCDate() + days);
+  return result;
+}
+
+function utcDateKey(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+
+function calculateStreakDays(doneDates: Array<Date | null>): number {
+  const completionDays = new Set(
+    doneDates
+      .filter((date): date is Date => date instanceof Date)
+      .map(dateKeyInTimeZone)
+  );
+
+  let currentDay = parseDateKey(dateKeyInTimeZone(new Date()));
+  let streakDays = 0;
+
+  while (completionDays.has(utcDateKey(currentDay))) {
+    streakDays += 1;
+    currentDay = addUtcDays(currentDay, -1);
+  }
+
+  return streakDays;
+}
+
+function displayNameFromEmail(email: string): string {
+  const localPart = email.split('@')[0];
+
+  return localPart
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
 app.use(express.json());
 
 app.use((_req, res, next) => {
@@ -50,6 +118,82 @@ app.get('/health/db', async (_req, res) => {
     res.json({ status: 'ok', time: result.rows[0]?.time });
   } catch (err) {
     res.status(500).json({ status: 'error', message: (err as Error).message });
+  }
+});
+
+app.get('/api/statistics', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    const userId = req.user!.userId;
+
+    const [userTasks, userRows] = await Promise.all([
+      db.select().from(tasks).where(eq(tasks.userId, userId)),
+      db.select().from(users).where(eq(users.id, userId)),
+    ]);
+
+    const user = userRows[0];
+    if (!user) {
+      return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+    }
+
+
+    const finishedTasks = userTasks.filter((task) => task.isDone === true);
+    const openTasks = userTasks.filter((task) => task.isDone === false);
+    const importantTasks = userTasks.filter((task) => task.priority === 'Hoch');
+
+    const todayKey = dateKeyInTimeZone(new Date());
+    const today = parseDateKey(todayKey);
+    const daysSinceMonday = (today.getUTCDay() + 6) % 7;
+    const monday = addUtcDays(today, -daysSinceMonday);
+
+    const weeklyCompletion = WEEKDAY_LABELS.map((day, index) => {
+      const dateKey = utcDateKey(addUtcDays(monday, index));
+      const tasksForDay = userTasks.filter((task) => task.dueDate === dateKey);
+
+      return {
+        day,
+        done: tasksForDay.filter((task) => task.isDone === true).length,
+        total: tasksForDay.length,
+      };
+    });
+
+    const now = new Date();
+
+    return res.status(200).json({
+      user: {
+
+        name: displayNameFromEmail(user.email),
+        email: user.email,
+        weekday: new Intl.DateTimeFormat('de-DE', {
+          weekday: 'long',
+          timeZone: APP_TIME_ZONE,
+        }).format(now),
+        date: new Intl.DateTimeFormat('de-DE', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: APP_TIME_ZONE,
+        }).format(now),
+      },
+      summary: {
+        totalTasks: userTasks.length,
+        finished: finishedTasks.length,
+        inProgress: openTasks.length,
+        important: importantTasks.length,
+        streakDays: calculateStreakDays(
+          finishedTasks.map((task) => task.doneAt)
+        ),
+      },
+      openTasks: openTasks.map((task) => ({
+        title: task.title,
+        priority: task.priority,
+        due: task.dueDate ?? '',
+      })),
+      importantTasks: importantTasks.map((task) => task.title),
+      weeklyCompletion,
+    });
+  } catch (error) {
+    console.error('Fehler beim Laden der Statistiken:', error);
+    return res.status(500).json({ error: 'Statistiken konnten nicht geladen werden' });
   }
 });
 
