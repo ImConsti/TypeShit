@@ -270,28 +270,57 @@
   color: var(--text-main);
 }
 
-.weekRow {
+.trendSubtitle {
+  margin: -0.35rem 0 0.85rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.deadlineList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: grid;
-  grid-template-columns: 42px 1fr 50px;
+  gap: 0.6rem;
+}
+
+.deadlineRow {
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  margin-bottom: 0.55rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.weekRow span {
-  font-size: 0.9rem;
+.deadlineRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
-.weekTrack {
-  height: 10px;
-  border-radius: 999px;
-  background: var(--border-color);
+.deadlineInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.deadlineTitle {
+  color: var(--text-main);
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.weekFill {
-  height: 100%;
-  background: var(--primary-color);
+.deadlineWhen {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.deadlineOverdue {
+  color: var(--danger-color);
+  font-weight: 600;
 }
 
 .statusHeader {

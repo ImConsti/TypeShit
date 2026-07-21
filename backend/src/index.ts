@@ -30,7 +30,7 @@ const authenticateToken = (req: AuthRequest, res: express.Response, next: expres
 };
 
 const APP_TIME_ZONE = 'Europe/Berlin';
-const WEEKDAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] as const;
+const DEADLINE_WINDOW_DAYS = 7;
 
 
 function dateKeyInTimeZone(date: Date): string {
@@ -142,19 +142,28 @@ app.get('/api/statistics', authenticateToken, async (req: AuthRequest, res: expr
 
     const todayKey = dateKeyInTimeZone(new Date());
     const today = parseDateKey(todayKey);
-    const daysSinceMonday = (today.getUTCDay() + 6) % 7;
-    const monday = addUtcDays(today, -daysSinceMonday);
 
-    const weeklyCompletion = WEEKDAY_LABELS.map((day, index) => {
-      const dateKey = utcDateKey(addUtcDays(monday, index));
-      const tasksForDay = userTasks.filter((task) => task.dueDate === dateKey);
+    const upcomingDeadlines = openTasks
+      .filter((task) => task.dueDate)
+      .map((task) => {
+        const dueDate = parseDateKey(task.dueDate!);
+        const daysUntil = Math.round((dueDate.getTime() - today.getTime()) / 86400000);
 
-      return {
-        day,
-        done: tasksForDay.filter((task) => task.isDone === true).length,
-        total: tasksForDay.length,
-      };
-    });
+        return {
+          title: task.title,
+          priority: task.priority,
+          dueDate: task.dueDate!,
+          label: new Intl.DateTimeFormat('de-DE', {
+            day: '2-digit',
+            month: '2-digit',
+            timeZone: APP_TIME_ZONE,
+          }).format(dueDate),
+          daysUntil,
+          overdue: daysUntil < 0,
+        };
+      })
+      .filter((item) => item.daysUntil <= DEADLINE_WINDOW_DAYS)
+      .sort((a, b) => a.daysUntil - b.daysUntil);
 
     const now = new Date();
 
@@ -189,7 +198,7 @@ app.get('/api/statistics', authenticateToken, async (req: AuthRequest, res: expr
         due: task.dueDate ?? '',
       })),
       importantTasks: importantTasks.map((task) => task.title),
-      weeklyCompletion,
+      upcomingDeadlines,
     });
   } catch (error) {
     console.error('Fehler beim Laden der Statistiken:', error);
