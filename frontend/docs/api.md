@@ -38,7 +38,43 @@ Basis-URL: `/api`
 |---|---|---|---|---|
 | Statistiken abrufen | `GET` | `/api/statistics` | `Authorization`-Header | `StatisticsData` |
 
----
+```json
+{
+  "user": {
+    "name": "Max Mustermann",
+    "email": "max.mustermann@example.com",
+    "weekday": "Montag",
+    "date": "3. August 2026"
+  },
+  "summary": {
+    "totalTasks": 8,
+    "finished": 3,
+    "inProgress": 5,
+    "important": 2,
+    "streakDays": 2
+  },
+  "openTasks": [
+    {
+      "title": "Prepare presentation",
+      "priority": "Hoch",
+      "due": "2026-08-04"
+    }
+  ],
+  "importantTasks": [
+    "Prepare presentation"
+  ],
+  "upcomingDeadlines": [
+    {
+      "title": "Prepare presentation",
+      "priority": "Hoch",
+      "dueDate": "2026-08-04",
+      "label": "04.08.",
+      "daysUntil": 1,
+      "overdue": false
+    }
+  ]
+}
+```
 
 ## Datenformate
 

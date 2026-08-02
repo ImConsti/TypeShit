@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import styles from './StatisticsPage.module.css';
 
+/** Minimal open-task representation returned by GET /api/statistics. */
 interface Task {
   title: string;
   priority: string;
   due: string;
 }
 
+/** Deadline data precomputed by the backend for direct presentation. */
 interface UpcomingDeadline {
   title: string;
   priority: string;
@@ -19,6 +21,10 @@ interface UpcomingDeadline {
   overdue: boolean;
 }
 
+/**
+ * Public contract between the statistics backend endpoint and this page.
+ * Field names and nesting must stay synchronized with GET /api/statistics.
+ */
 export interface StatisticsData {
   user: {
     name: string;
@@ -38,11 +44,13 @@ export interface StatisticsData {
   upcomingDeadlines: UpcomingDeadline[];
 }
 
+/** Converts a count pair into a rounded percentage and avoids division by zero. */
 function asPercent(done: number, total: number): number {
   if (!total) return 0;
   return Math.round((done / total) * 100);
 }
 
+/** Formats the backend's numeric deadline distance as a German UI label. */
 function deadlineLabel(daysUntil: number, overdue: boolean): string {
   if (overdue) {
     const days = Math.abs(daysUntil);
@@ -57,6 +65,7 @@ interface DeadlinesListProps {
   deadlines: UpcomingDeadline[];
 }
 
+/** Renders upcoming and overdue tasks, including an explicit empty state. */
 function DeadlinesList({ deadlines }: DeadlinesListProps) {
   if (deadlines.length === 0) {
     return <p className={styles.trendSubtitle}>Keine anstehenden Fälligkeiten.</p>;
@@ -114,6 +123,7 @@ const priorityClassMap: Record<string, string> = {
   Niedrig: styles.low
 };
 
+/** Presentational statistics dashboard; data loading is handled by the route. */
 export default function StatisticsPage({ stats }: StatisticsPageProps) {
   const [statusView, setStatusView] = useState<'bars' | 'circles'>('bars');
   const [menuOpen, setMenuOpen] = useState(false);

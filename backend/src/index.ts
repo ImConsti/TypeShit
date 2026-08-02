@@ -29,8 +29,17 @@ const authenticateToken = (req: AuthRequest, res: express.Response, next: expres
   });
 };
 
+/** Time zone used for date-based statistics and German date formatting. */
 const APP_TIME_ZONE = 'Europe/Berlin';
+
+/** Number of future days included in the upcoming-deadlines section. */
 const DEADLINE_WINDOW_DAYS = 7;
+
+/**
+ * Converts a JavaScript Date into a stable YYYY-MM-DD key in the application
+ * time zone. This prevents UTC/local-time differences from moving a task to
+ * the wrong calendar day.
+ */
 
 
 function dateKeyInTimeZone(date: Date): string {
@@ -53,10 +62,17 @@ function dateKeyInTimeZone(date: Date): string {
 }
 
 
+/**
+ * Parses a date-only value (YYYY-MM-DD) as UTC midnight so later date
+ * calculations do not depend on the machine's local time zone.
+ */
 function parseDateKey(dateKey: string): Date {
   const [year, month, day] = dateKey.split('-').map(Number);
   return new Date(Date.UTC(year, month - 1, day));
 }
+
+
+/** Returns a new Date shifted by the requested number of UTC calendar days. */
 
 function addUtcDays(date: Date, days: number): Date {
   const result = new Date(date);
@@ -64,9 +80,17 @@ function addUtcDays(date: Date, days: number): Date {
   return result;
 }
 
+/** Extracts the YYYY-MM-DD part of a UTC date. */
 function utcDateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
+
+
+/**
+ * Counts consecutive days, starting today and moving backwards, on which the
+ * user completed at least one task. Multiple completions on the same day count
+ * as one streak day.
+ */
 
 
 function calculateStreakDays(doneDates: Array<Date | null>): number {
@@ -86,6 +110,12 @@ function calculateStreakDays(doneDates: Array<Date | null>): number {
 
   return streakDays;
 }
+
+/**
+ * Builds a readable display name from the local part of an email address.
+ * Example: max.mustermann@example.com -> Max Mustermann.
+
+*/
 
 function displayNameFromEmail(email: string): string {
   const localPart = email.split('@')[0];
@@ -121,28 +151,46 @@ app.get('/health/db', async (_req, res) => {
   }
 });
 
+/**
+ * Returns the complete statistics payload required by StatisticsPage.
+ * authenticateToken validates the JWT first, so the route can only read data
+ * belonging to the currently logged-in user.
+ */
 app.get('/api/statistics', authenticateToken, async (req: AuthRequest, res: express.Response) => {
   try {
+    // The user ID comes exclusively from the verified JWT, never from the body
+    // or query string. This prevents requesting another user's statistics.
     const userId = req.user!.userId;
 
+    // Fetch the user's tasks and account information in parallel.
     const [userTasks, userRows] = await Promise.all([
       db.select().from(tasks).where(eq(tasks.userId, userId)),
       db.select().from(users).where(eq(users.id, userId)),
     ]);
 
+    // Drizzle returns an array even though a primary-key lookup can match only
+    // one user.
     const user = userRows[0];
     if (!user) {
       return res.status(404).json({ error: 'Benutzer nicht gefunden' });
     }
 
 
+    // Build reusable task groups for the summary and detailed lists. In this
+    // project, priority "Hoch" is the agreed definition of an important task.
     const finishedTasks = userTasks.filter((task) => task.isDone === true);
     const openTasks = userTasks.filter((task) => task.isDone === false);
     const importantTasks = userTasks.filter((task) => task.priority === 'Hoch');
 
+
+    // Normalize "today" once so all deadline calculations use the same date.
     const todayKey = dateKeyInTimeZone(new Date());
     const today = parseDateKey(todayKey);
 
+
+    // Convert open tasks with a due date into the exact structure expected by
+    // the frontend. Overdue tasks are retained; future tasks are limited to the
+    // configured deadline window.
     const upcomingDeadlines = openTasks
       .filter((task) => task.dueDate)
       .map((task) => {
@@ -162,14 +210,19 @@ app.get('/api/statistics', authenticateToken, async (req: AuthRequest, res: expr
           overdue: daysUntil < 0,
         };
       })
+      // Negative daysUntil values represent overdue tasks and therefore also
+      // satisfy this condition.
       .filter((item) => item.daysUntil <= DEADLINE_WINDOW_DAYS)
+      // Show the most overdue or nearest deadline first.
       .sort((a, b) => a.daysUntil - b.daysUntil);
 
     const now = new Date();
 
+    // Keep this response contract synchronized with StatisticsData in
+    // frontend/src/app/components/StatisticsPage.tsx.
     return res.status(200).json({
       user: {
-
+        // The users table currently has no dedicated name column.
         name: displayNameFromEmail(user.email),
         email: user.email,
         weekday: new Intl.DateTimeFormat('de-DE', {
@@ -183,6 +236,7 @@ app.get('/api/statistics', authenticateToken, async (req: AuthRequest, res: expr
           timeZone: APP_TIME_ZONE,
         }).format(now),
       },
+      // Aggregate counters displayed in the summary cards.
       summary: {
         totalTasks: userTasks.length,
         finished: finishedTasks.length,
@@ -192,11 +246,13 @@ app.get('/api/statistics', authenticateToken, async (req: AuthRequest, res: expr
           finishedTasks.map((task) => task.doneAt)
         ),
       },
+      // Return only the fields needed by the open-tasks table.
       openTasks: openTasks.map((task) => ({
         title: task.title,
         priority: task.priority,
         due: task.dueDate ?? '',
       })),
+      // The important-tasks panel requires title strings rather than objects.
       importantTasks: importantTasks.map((task) => task.title),
       upcomingDeadlines,
     });
