@@ -12,6 +12,7 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<void>;
   logout: () => void;
   register: (email: string, pass: string) => Promise<void>;
+  requestReset: (email: string) => Promise<string>;
   resetPassword: (email: string) => Promise<void>;
 }
 
@@ -82,6 +83,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.push('/statistics');
   };
 
+  const requestReset = async (emailInput: string): Promise<string> => {
+    const response = await fetch(`${API_BASE}/api/auth/request-reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: emailInput }),
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Anfrage fehlgeschlagen');
+    }
+    
+    return data.token;
+  };
+
   const resetPassword = async (emailInput: string) => {
     const response = await fetch(`${API_BASE}/api/auth/reset-password`, {
       method: 'POST',
@@ -111,7 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, email, role, login, logout, register, resetPassword }}>
+    <AuthContext.Provider value={{ isAuthenticated, email, role, login, logout, register, resetPassword, requestReset }}>
       {children}
     </AuthContext.Provider>
   );

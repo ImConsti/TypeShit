@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { db } from './db';
 import { tasks, users } from './schema';
+import crypto from 'crypto';
 
 const app = express();
 const PORT = 3001;
@@ -321,6 +322,30 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.post('/api/auth/logout', (_req, res) => {
   res.status(200).json({ success: true });
+});
+
+app.post('/api/auth/request-reset', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'E-Mail fehlt' });
+    
+    const userResult = await db.select().from(users).where(eq(users.email, email));
+    
+    if (!userResult[0]) {
+      return res.status(404).json({ error: 'E-Mail nicht gefunden' });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiry = new Date(Date.now() + 3600000);
+
+    await db.update(users)
+      .set({ resetToken: token, resetTokenExpiry: expiry })
+      .where(eq(users.id, userResult[0].id));
+    
+    res.status(200).json({ success: true, token });
+  } catch (error) {
+    res.status(500).json({ error: 'Serverfehler' });
+  }
 });
 
 app.post('/api/auth/reset-password', (req, res) => {
