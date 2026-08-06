@@ -6,7 +6,7 @@ export const users = pgTable('users', {
   id: serial().primaryKey(),
   email: text('email').notNull().unique(),
   passwordHash: text('password').notNull(),
-  role: text('role').notNull().default('user').notNull(),
+  role: text('role').notNull().default('user'),
   createdAt: timestamp().notNull().defaultNow(),
   resetToken: text('reset_token'),
   resetTokenExpiry: timestamp('reset_token_expiry'),

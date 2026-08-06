@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/src/contexts/AuthContext';
-import { promoteUser, fetchUsers } from '@/src/app/services/userService';
+import { promoteUser, fetchUsers, demoteUser, deleteUser } from '@/src/app/services/userService';
 import styles from './admin.module.css';
 
 interface UserData {
@@ -48,13 +48,34 @@ export default function AdminPage() {
     
     try {
       await promoteUser(Number(userId));
-      setStatus({ message: `Nutzer mit ID ${userId} wurde erfolgreich zum Admin befördert!`, type: 'success' });
+      setStatus({ message: `Nutzer mit ID ${userId} wurde Admin!`, type: 'success' });
       setUserId('');
       loadUsers();
     } catch (err: any) {
       setStatus({ message: `Fehler: ${err.message}`, type: 'error' });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDemote = async (id: number) => {
+    try {
+      await demoteUser(id);
+      setStatus({ message: `Nutzer mit ID ${id} ist wieder User.`, type: 'success' });
+      loadUsers();
+    } catch (err: any) {
+      setStatus({ message: `Fehler: ${err.message}`, type: 'error' });
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Nutzer wirklich löschen?')) return;
+    try {
+      await deleteUser(id);
+      setStatus({ message: `Nutzer mit ID ${id} gelöscht.`, type: 'success' });
+      loadUsers();
+    } catch (err: any) {
+      setStatus({ message: `Fehler: ${err.message}`, type: 'error' });
     }
   };
 
@@ -100,6 +121,7 @@ export default function AdminPage() {
               <th style={{ padding: '0.5rem' }}>ID</th>
               <th style={{ padding: '0.5rem' }}>E-Mail</th>
               <th style={{ padding: '0.5rem' }}>Rolle</th>
+              <th style={{ padding: '0.5rem' }}>Aktionen</th>
             </tr>
           </thead>
           <tbody>
@@ -118,6 +140,22 @@ export default function AdminPage() {
                   }}>
                     {u.role}
                   </span>
+                </td>
+                <td style={{ padding: '0.5rem' }}>
+                  {u.role === 'admin' && (
+                    <button 
+                      onClick={() => handleDemote(u.id)}
+                      style={{ marginRight: '8px', padding: '0.3rem 0.6rem', cursor: 'pointer' }}
+                    >
+                      Rechte entziehen
+                    </button>
+                  )}
+                  <button 
+                    onClick={() => handleDelete(u.id)}
+                    style={{ padding: '0.3rem 0.6rem', cursor: 'pointer', backgroundColor: '#ffebee', border: '1px solid #c62828', color: '#c62828' }}
+                  >
+                    Loeschen
+                  </button>
                 </td>
               </tr>
             ))}

@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const authToken = request.cookies.get('auth_token')?.value;
   const path = request.nextUrl.pathname;
 
-  const isPublicRoute = path === '/login' || path === '/register' || path === '/forgot-password';
+  const isPublicRoute = path === '/login' || path === '/register' || path === '/forgot-password' || path === '/reset-password';
 
   if (!authToken && !isPublicRoute) {
     return NextResponse.redirect(new URL('/login', request.url));

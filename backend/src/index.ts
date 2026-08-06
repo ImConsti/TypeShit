@@ -348,10 +348,30 @@ app.post('/api/auth/request-reset', async (req, res) => {
   }
 });
 
-app.post('/api/auth/reset-password', (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ error: 'E-Mail fehlt' });
-  res.status(200).json({ success: true });
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword || newPassword.length < 6) {
+      return res.status(400).json({ error: 'Ungueltige Eingaben' });
+    }
+
+    const userResult = await db.select().from(users).where(eq(users.resetToken, token));
+    const user = userResult[0];
+
+    if (!user || !user.resetTokenExpiry || new Date() > user.resetTokenExpiry) {
+      return res.status(400).json({ error: 'Token ungueltig oder abgelaufen' });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    await db.update(users)
+      .set({ passwordHash: hashed, resetToken: null, resetTokenExpiry: null })
+      .where(eq(users.id, user.id));
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Serverfehler' });
+  }
 });
 
 app.put('/api/tasks/:id', authenticateToken, async (req: AuthRequest, res: express.Response) => {

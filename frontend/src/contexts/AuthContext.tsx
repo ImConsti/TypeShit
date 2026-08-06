@@ -13,7 +13,7 @@ interface AuthContextType {
   logout: () => void;
   register: (email: string, pass: string) => Promise<void>;
   requestReset: (email: string) => Promise<string>;
-  resetPassword: (email: string) => Promise<void>;
+ resetPassword: (token: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -99,15 +99,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return data.token;
   };
 
-  const resetPassword = async (emailInput: string) => {
+  const resetPassword = async (token: string, newPasswordInput: string) => {
     const response = await fetch(`${API_BASE}/api/auth/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: emailInput }),
+      body: JSON.stringify({ token, newPassword: newPasswordInput }),
     });
-
+    
+    const data = await response.json();
+    
     if (!response.ok) {
-      throw new Error('Passwort-Reset fehlgeschlagen');
+      throw new Error(data.error || 'Passwort-Reset fehlgeschlagen');
     }
   };
 
