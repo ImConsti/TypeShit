@@ -1,10 +1,38 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: typeshit
+      POSTGRES_PASSWORD: typeshit
+      POSTGRES_DB: typeshit
+    ports:
+      - "5432:5432"
+    volumes:
+      - typeshit-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U typeshit"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
+  migrate:
+    build: ./backend
+    command: ["npm", "run", "db:migrate"]
+    environment:
+      DATABASE_URL: postgresql://typeshit:typeshit@postgres:5432/typeshit
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   backend:
     build: ./backend
     ports:
       - "3001:3001"
-    env_file:
-      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://typeshit:typeshit@postgres:5432/typeshit
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
 
   frontend:
     build: ./frontend
@@ -12,3 +40,6 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+
+volumes:
+  typeshit-db-data:

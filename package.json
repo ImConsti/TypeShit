@@ -1,4 +1,12 @@
 {
+  "name": "typeshit",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend",
+    "dev": "docker compose up --build"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.3"

@@ -2,7 +2,11 @@
 
 > ERSTELLT MIT CLAUDE!!!
 
-Express 5 REST API written in TypeScript, using Drizzle ORM with a Neon (serverless Postgres) database.
+Express 5 REST API written in TypeScript, using Drizzle ORM over standard Postgres (`pg`/node-postgres).
+In production this connects to [Neon](https://neon.tech/) (serverless Postgres); for local development
+and testing it works identically against a plain local Postgres instance (see
+[`../docs/02-entwicklungsumgebung.md`](../docs/02-entwicklungsumgebung.md#datenbank-für-lokale-tests) for
+the zero-setup `docker compose up` path).
 
 ## Structure
 
@@ -10,7 +14,7 @@ Express 5 REST API written in TypeScript, using Drizzle ORM with a Neon (serverl
 backend/
 ├── src/
 │   ├── index.ts      # Express server & routes
-│   ├── db.ts         # Neon connection + Drizzle instance
+│   ├── db.ts         # Postgres connection (pg) + Drizzle instance
 │   └── schema.ts     # Database table definitions (add your tables here)
 ├── drizzle/          # Generated migration files
 ├── drizzle.config.ts # Drizzle CLI config
@@ -28,7 +32,9 @@ npm install
 
 **2. Create a `.env` file**
 
-Copy `.env.example` and fill in your values from the Neon/Netlify dashboard:
+Only needed if you run the backend directly with `npm run dev` (not via `docker compose up`, which
+provisions its own local database automatically). Copy `.env.example` and fill in either a local
+Postgres URL or your values from the Neon dashboard:
 ```bash
 cp .env.example .env
 ```
@@ -48,7 +54,7 @@ npm run dev
 | `npm run build` | Compile TypeScript to `dist/` |
 | `npm start` | Run compiled output |
 | `npm run db:generate` | Generate a migration from schema changes |
-| `npm run db:migrate` | Apply pending migrations to Neon |
+| `npm run db:migrate` | Apply pending migrations to the database in `DATABASE_URL` |
 | `npm run db:studio` | Open Drizzle Studio to browse data |
 
 ## Endpoints
@@ -62,4 +68,4 @@ npm run dev
 
 1. Define your table in `src/schema.ts`
 2. Run `npm run db:generate` to create a migration
-3. Run `npm run db:migrate` to apply it to Neon
+3. Run `npm run db:migrate` to apply it to the database in `DATABASE_URL`

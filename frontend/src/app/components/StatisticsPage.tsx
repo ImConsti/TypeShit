@@ -4,18 +4,27 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import styles from './StatisticsPage.module.css';
 
+/** Minimal open-task representation returned by GET /api/statistics. */
 interface Task {
   title: string;
   priority: string;
   due: string;
 }
 
-interface WeeklyCompletion {
-  day: string;
-  done: number;
-  total: number;
+/** Deadline data precomputed by the backend for direct presentation. */
+interface UpcomingDeadline {
+  title: string;
+  priority: string;
+  dueDate: string;
+  label: string;
+  daysUntil: number;
+  overdue: boolean;
 }
 
+/**
+ * Public contract between the statistics backend endpoint and this page.
+ * Field names and nesting must stay synchronized with GET /api/statistics.
+ */
 export interface StatisticsData {
   user: {
     name: string;
@@ -32,62 +41,52 @@ export interface StatisticsData {
   };
   openTasks: Task[];
   importantTasks: string[];
-  weeklyCompletion: WeeklyCompletion[];
+  upcomingDeadlines: UpcomingDeadline[];
 }
 
-const defaultStats: StatisticsData = {
-  user: {
-    name: "Demo User",
-    email: "user@example.com",
-    weekday: "Donnerstag",
-    date: "11. Juni 2026",
-  },
-  summary: {
-    totalTasks: 45,
-    finished: 32,
-    inProgress: 13,
-    important: 5,
-    streakDays: 9,
-  },
-  openTasks: [
-    { title: "Präsentation vorbereiten", priority: "Hoch", due: "12. Jun 2026" },
-    { title: "Backend-Architektur evaluieren", priority: "Hoch", due: "13. Jun 2026" },
-    { title: "Routing-Bug fixen", priority: "Mittel", due: "14. Jun 2026" },
-  ],
-  importantTasks: ["Präsentation vorbereiten", "Backend-Architektur evaluieren", "Datenbank-Schema entwerfen"],
-  weeklyCompletion: [
-    { day: "Mo", done: 4, total: 5 },
-    { day: "Di", done: 6, total: 7 },
-    { day: "Mi", done: 3, total: 3 },
-    { day: "Do", done: 5, total: 8 },
-    { day: "Fr", done: 7, total: 10 },
-    { day: "Sa", done: 4, total: 5 },
-    { day: "So", done: 3, total: 7 },
-  ],
-};
-
+/** Converts a count pair into a rounded percentage and avoids division by zero. */
 function asPercent(done: number, total: number): number {
   if (!total) return 0;
   return Math.round((done / total) * 100);
 }
 
-interface WeeklyRowProps {
-  day: string;
-  done: number;
-  total: number;
+/** Formats the backend's numeric deadline distance as a German UI label. */
+function deadlineLabel(daysUntil: number, overdue: boolean): string {
+  if (overdue) {
+    const days = Math.abs(daysUntil);
+    return `${days} ${days === 1 ? 'Tag' : 'Tage'} überfällig`;
+  }
+  if (daysUntil === 0) return 'Heute';
+  if (daysUntil === 1) return 'Morgen';
+  return `In ${daysUntil} Tagen`;
 }
 
-function WeeklyRow({ day, done, total }: WeeklyRowProps) {
-  const percent = asPercent(done, total);
+interface DeadlinesListProps {
+  deadlines: UpcomingDeadline[];
+}
+
+/** Renders upcoming and overdue tasks, including an explicit empty state. */
+function DeadlinesList({ deadlines }: DeadlinesListProps) {
+  if (deadlines.length === 0) {
+    return <p className={styles.trendSubtitle}>Keine anstehenden Fälligkeiten.</p>;
+  }
 
   return (
-    <div className={styles.weekRow}>
-      <span>{day}</span>
-      <div className={styles.weekTrack}>
-        <div className={styles.weekFill} style={{ width: `${percent}%` }} />
-      </div>
-      <span>{`${done}/${total}`}</span>
-    </div>
+    <ul className={styles.deadlineList}>
+      {deadlines.map((deadline) => (
+        <li key={deadline.title} className={styles.deadlineRow}>
+          <div className={styles.deadlineInfo}>
+            <span className={styles.deadlineTitle}>{deadline.title}</span>
+            <span className={`${styles.badge} ${priorityClassMap[deadline.priority] || ''}`}>
+              {deadline.priority}
+            </span>
+          </div>
+          <span className={`${styles.deadlineWhen} ${deadline.overdue ? styles.deadlineOverdue : ''}`}>
+            {deadlineLabel(deadline.daysUntil, deadline.overdue)} · {deadline.label}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -115,7 +114,7 @@ function StatusRow({ label, value, colorClass }: StatusRowProps) {
 }
 
 interface StatisticsPageProps {
-  stats?: StatisticsData;
+  stats: StatisticsData;
 }
 
 const priorityClassMap: Record<string, string> = {
@@ -124,7 +123,8 @@ const priorityClassMap: Record<string, string> = {
   Niedrig: styles.low
 };
 
-export default function StatisticsPage({ stats = defaultStats }: StatisticsPageProps) {
+/** Presentational statistics dashboard; data loading is handled by the route. */
+export default function StatisticsPage({ stats }: StatisticsPageProps) {
   const [statusView, setStatusView] = useState<'bars' | 'circles'>('bars');
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -160,13 +160,12 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
           <div>
             <span className={styles.eyebrow}>Aufgaben-Analyse</span>
             <h1>Statistiken</h1>
-            <p>Schnellübersicht über Durchsatz, Auslastung und Fortschritt.</p>
           </div>
 
           <aside className={styles.datePill}>
             <span>{stats.user.weekday}</span>
             <strong>{stats.user.date}</strong>
-            <span>{stats.user.name}</span>
+            <span>{stats.user.email}</span>
           </aside>
         </header>
 
@@ -327,10 +326,9 @@ export default function StatisticsPage({ stats = defaultStats }: StatisticsPageP
           </article>
 
           <article className={styles.panel}>
-            <h2>Wöchentlicher Fortschritt</h2>
-            {stats.weeklyCompletion.map((item) => (
-              <WeeklyRow key={item.day} day={item.day} done={item.done} total={item.total} />
-            ))}
+            <h2>Anstehende Fälligkeiten</h2>
+            <p className={styles.trendSubtitle}>Überfällige und in den nächsten 7 Tagen fällige Aufgaben</p>
+            <DeadlinesList deadlines={stats.upcomingDeadlines} />
           </article>
         </section>
       </div>
