@@ -13,11 +13,15 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
     const [description, setDescription] = useState("");
     const [priority, setPriority] = useState<Priority>("Mittel");
     const [dueDate, setDueDate] = useState("");
-
+    
     const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
-
+    
+    // Am Anfang wurde FormEvent genutzt. Mir ist aber erst später aufgefallen, dass es veraltet ist und man stattdessen das SubmitEvent verwenden sollte: 
+    // Generell wurde sich im Umgang mit Formularen folgende Dokumentation angeschaut: 
+    // https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/forms_and_events/
+    // https://react.dev/reference/react-dom/components/form
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
-        e.preventDefault();
+        e.preventDefault(); 
         const cleanTitle = title.trim();
         const cleanDescription = description.trim();
 
@@ -44,8 +48,8 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
             
             <div className={styles.inputGroup}>
                 <div className={`${styles.fieldWrapper} ${styles.flex2}`}>
-                    <input
-                        type="text"
+                    <textarea
+                        rows={2}
                         placeholder="Aufgabe..."
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
@@ -59,8 +63,8 @@ export default function TaskInput({ onAddTask }: TaskInputProps) {
                 </div>
                 
                 <div className={`${styles.fieldWrapper} ${styles.flex3}`}>
-                    <input
-                        type="text"
+                    <textarea
+                        rows={2}
                         placeholder="Beschreibung..."
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}

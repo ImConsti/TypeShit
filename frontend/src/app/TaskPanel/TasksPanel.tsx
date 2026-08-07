@@ -17,7 +17,9 @@ export default function TasksPanel() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
+    // https://www.freecodecamp.org/news/react-useeffect-absolute-beginners/
     useEffect(() => {
+        // https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage
         const token = sessionStorage.getItem("auth_token");
         fetch(`${API_BASE}/api/tasks`, {
             headers: { Authorization: `Bearer ${token}` }

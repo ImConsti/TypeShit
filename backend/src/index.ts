@@ -21,6 +21,7 @@ const authenticateToken = (req: AuthRequest, res: express.Response, next: expres
 
   if (!token) return res.status(401).json({ error: 'Kein Token vorhanden' });
 
+  // https://www.npmjs.com/package/jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback
   jwt.verify(token, JWT_SECRET, (err, decodedUser) => {
     if (err) {
       return res.status(403).json({ error: 'Forbidden Token' });
@@ -509,12 +510,13 @@ app.get('/api/tasks', authenticateToken, async (req: AuthRequest, res: express.R
     res.status(500).json({ error: 'Serverfehler' });
   }
 });
-// Hier muss ich in die post route noch die Validierung vom Datum einbauen! 
+
 app.post('/api/tasks', authenticateToken, async (req: AuthRequest, res: express.Response) => {
   try {
     const {title, description, priority, dueDate } = req.body;
     const userId = req.user!.userId;
     const validPriorities = ['Hoch', 'Mittel', 'Niedrig'];
+    const todayString = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
 
     if (typeof title !== 'string' || !title || title.length > 300 || title.trim() === '') {
       return res.status(400).json({ error: 'Ungültiger Titel' });
@@ -526,6 +528,14 @@ app.post('/api/tasks', authenticateToken, async (req: AuthRequest, res: express.
 
     if (!validPriorities.includes(priority)) {
       return res.status(400).json({ error: 'Ungültige Priorität' });
+    }
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse
+    if (dueDate && isNaN(Date.parse(dueDate))) {
+      return res.status(400).json({ error: 'Ungültiges Datum' });
+    }
+
+    if (dueDate && dueDate < todayString) {
+      return res.status(400).json({ error: 'Das Fälligkeitsdatum darf nicht in der Vergangenheit liegen' });
     }
     
     const newTask = await db.insert(tasks).values({
