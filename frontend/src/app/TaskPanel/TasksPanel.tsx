@@ -21,6 +21,10 @@ export default function TasksPanel() {
     useEffect(() => {
         // https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage
         const token = sessionStorage.getItem("auth_token");
+        if (!token) {
+            setIsLoaded(true);
+            return;
+        }
         fetch(`${API_BASE}/api/tasks`, {
             headers: { Authorization: `Bearer ${token}` }
         })

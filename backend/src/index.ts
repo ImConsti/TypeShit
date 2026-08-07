@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { db } from './db';
 import { tasks, users } from './schema';
 import crypto from 'crypto';
+import { seedAdminAccount } from './seed';
 
 const app = express();
 const PORT = 3001;
@@ -584,6 +585,10 @@ app.post('/api/tasks', authenticateToken, async (req: AuthRequest, res: express.
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+seedAdminAccount()
+  .catch((error) => console.error('Seeding admin account failed:', error))
+  .finally(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  });
