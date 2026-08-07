@@ -42,7 +42,7 @@ npm start   # im Frontend Root
 
 ## Deployment (aktueller Stand)
 
-- **Backend:** deployt auf Railway
+- **Backend:** deployt auf Render
 - **Frontend:** GitHub-Actions-Workflow
 
 URL des Deployments: https://type-shit-plum.vercel.app/

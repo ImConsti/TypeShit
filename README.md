@@ -3,7 +3,7 @@
 > DIESE README IST ERSTELLT MIT CLAUDE!!!
 
 Vollständige Projektdokumentation (Nutzung, Setup, Architektur, Webdesign, Eigenleistung): siehe
-[`docs/`](docs/README.md).
+[`Dokumentation/`](Dokumentation/README.md).
 
 ## Project Structure
 
@@ -11,8 +11,7 @@ Vollständige Projektdokumentation (Nutzung, Setup, Architektur, Webdesign, Eige
 TypeShit/
 ├── frontend/          # Next.js 16 + React 19 (TypeScript)
 ├── backend/           # Express 5 + Drizzle ORM + Postgres (TypeScript)
-├── scripts/            # setup.sh / setup.ps1 – Entwicklungsumgebung einrichten
-├── docs/               # Projektdokumentation
+├── Dokumentation/               # Projektdokumentation
 ├── docker-compose.yml  # Run the full project (incl. eigenständiger lokaler DB) with one command
 └── .gitignore
 ```
@@ -25,7 +24,7 @@ docker compose up --build
 
 Startet eine eigenständige lokale Postgres-Datenbank, wendet die Migrationen automatisch an und startet
 danach Backend und Frontend – **kein** externer Datenbank-Account nötig (siehe
-[`docs/02-entwicklungsumgebung.md`](docs/02-entwicklungsumgebung.md#datenbank-für-lokale-tests)).
+[`Dokumentation/02-entwicklungsumgebung.md`](Dokumentation/02-entwicklungsumgebung.md)).
 
 - Frontend → http://localhost:3000
 - Backend → http://localhost:3001
@@ -33,8 +32,6 @@ danach Backend und Frontend – **kein** externer Datenbank-Account nötig (sieh
 ## Manual Setup
 
 ```bash
-npm run setup   # installiert Abhängigkeiten in frontend/ und backend/, legt .env-Dateien an
-
 # Terminal 1 — frontend
 npm run dev --prefix frontend
 
@@ -43,5 +40,5 @@ npm run dev --prefix backend
 ```
 
 Für den manuellen Start (ohne Docker) muss `backend/.env` zusätzlich mit einer gültigen `DATABASE_URL`
-befüllt werden (lokale Postgres-Instanz oder Neon) – siehe [`docs/02-entwicklungsumgebung.md`](docs/02-entwicklungsumgebung.md)
+befüllt werden (lokale Postgres-Instanz oder Neon) – siehe [`Dokumentation/02-entwicklungsumgebung.md`](Dokumentation/02-entwicklungsumgebung.md)
 und [`backend/README.md`](./backend/README.md).
