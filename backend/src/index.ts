@@ -267,29 +267,36 @@ app.get('/api/statistics', authenticateToken, async (req: AuthRequest, res: expr
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password || password.length < 6) {
-      return res.status(400).json({ error: 'Ungueltige Eingaben' });
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'E-Mail und Passwort sind erforderlich.' });
     }
-    const hashed = await bcrypt.hash(password, 10);
-    const newUser = await db.insert(users).values({
+
+    const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    if (existingUser.length > 0) {
+      return res.status(400).json({ error: 'Nutzer existiert bereits.' });
+    }
+
+    const userCheck = await db.select().from(users).limit(1);
+    const role = userCheck.length === 0 ? 'admin' : 'user';
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const [newUser] = await db.insert(users).values({
       email,
-      passwordHash: hashed,
+      passwordHash: hashedPassword,
+      role,
     }).returning();
-    
+
     const token = jwt.sign(
-      { userId: newUser[0].id, email: newUser[0].email, role: newUser[0].role },
+      { userId: newUser.id, email: newUser.email, role: newUser.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
-    
-    // HIER das , role: newUser[0].role ergänzen:
-    res.status(201).json({ token, email, role: newUser[0].role });
-    
-  } catch (error: any) {
-    if (error.code === '23505') {
-      return res.status(400).json({ error: 'E-Mail existiert bereits' });
-    }
-    res.status(500).json({ error: 'Serverfehler' });
+
+    return res.status(201).json({ token, role: newUser.role });
+  } catch (error) {
+    return res.status(500).json({ error: 'Interner Serverfehler' });
   }
 });
 
@@ -454,9 +461,35 @@ app.patch('/api/users/:id/promote', authenticateToken, async (req: AuthRequest, 
     }
     const id = Number(req.params.id);
     await db.update(users).set({ role: 'admin' }).where(eq(users.id, id));
-    res.json({ message: `User mit ID ${id} wurde zum Admin befoerdert.` });
+    res.json({ message: `User mit ID ${id} wurde zum Admin befördert.` });
   } catch (error) {
     res.status(500).json({ error: 'Befoerderung fehlgeschlagen' });
+  }
+});
+
+app.patch('/api/users/:id/demote', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ error: 'Zugriff verweigert' });
+    }
+    const id = Number(req.params.id);
+    await db.update(users).set({ role: 'user' }).where(eq(users.id, id));
+    res.json({ message: `User mit ID ${id} wurde degradiert.` });
+  } catch (error) {
+    res.status(500).json({ error: 'Degradierung fehlgeschlagen' });
+  }
+});
+
+app.delete('/api/users/:id', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ error: 'Zugriff verweigert' });
+    }
+    const id = Number(req.params.id);
+    await db.delete(users).where(eq(users.id, id));
+    res.json({ message: `User mit ID ${id} wurde gelöscht.` });
+  } catch (error) {
+    res.status(500).json({ error: 'Löschen fehlgeschlagen' });
   }
 });
 

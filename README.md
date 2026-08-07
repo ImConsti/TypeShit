@@ -1,6 +1,6 @@
 # TypeShit
 
-> ERSTELLT MIT CLAUDE!!!
+> DIESE README IST ERSTELLT MIT CLAUDE!!!
 
 Vollständige Projektdokumentation (Nutzung, Setup, Architektur, Webdesign, Eigenleistung): siehe
 [`docs/`](docs/README.md).
