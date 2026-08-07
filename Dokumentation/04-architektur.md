@@ -8,7 +8,7 @@ TypeShit/
 ├── backend/                # Express + Drizzle + Neon Postgres (TypeScript)
 ├── docs/                   # diese Dokumentation
 ├── docker-compose.yml      # Frontend + Backend gemeinsam starten
-└── .github/workflows/      # GitHub-Pages-Deployment
+└── frontend/.github/workflows/ # Build- und Vercel-Deployment-Pipeline
 ```
 
 ## Frontend (`frontend/`)
@@ -18,10 +18,10 @@ frontend/src/
 ├── app/
 │   ├── page.tsx                 # Dashboard „/“
 │   ├── layout.tsx               # Root-Layout
-│   ├── middleware.tsx           # Route Guard: leitet ohne auth_token-Cookie auf /login um
 │   ├── login/page.tsx           # Login-Formular
 │   ├── register/page.tsx        # Registrierungs-Formular
-│   ├── forgot-password/page.tsx # Passwort-vergessen-Formular
+│   ├── forgot-password/page.tsx # Passwort-vergessen-Formular (fordert Reset-Token an)
+│   ├── reset-password/page.tsx  # Formular zum Setzen des neuen Passworts mit Reset-Token
 │   ├── statistics/page.tsx      # lädt GET /api/statistics und rendert StatisticsPage
 │   ├── admin/page.tsx           # Nutzerverwaltung mit "admin"-Rolle
 │   ├── TaskPanel/
@@ -35,7 +35,7 @@ frontend/src/
 │   │   └── DeleteButton.tsx     # Lösch-Button
 │   └── services/userService.ts  # fetch-Wrapper für /api/users, /api/users/:id/promote
 └── contexts/
-    └── AuthContext.tsx          # Auth-State + login/register/logout
+    └── AuthContext.tsx          # Auth-State + login/register/logout, clientseitiger Route Guard (leitet ohne Token in sessionStorage auf /login um)
 ```
 
 Styling ist über CSS Modules (`*.module.css`), globale Variablen liegen in [`frontend/src/app/globals.css`](../frontend/src/app/globals.css).
@@ -84,22 +84,25 @@ die zugehörigen Tasks mit).
 ### Implementierte API-Endpunkte
 
 
-| Methode | Endpunkt | Auth | Beschreibung                                               |
-|---|---|---|------------------------------------------------------------|
-| GET | `/health` | – | Health-Check                                               |
-| GET | `/health/db` | – | DB-Verbindung prüfen                                       |
-| POST | `/api/auth/register` | – | Account anlegen, gibt `{ token, email, role }` zurück      |
-| POST | `/api/auth/login` | – | Anmelden, gibt `{ token, email, role }` zurück             |
-| POST | `/api/auth/logout` | – | Bestätigt Logout                                           |
-| POST | `/api/auth/reset-password` | – | Bestätigt Request, führt aktuell keinen echten Reset durch |
-| GET | `/api/tasks` | JWT | eigene Aufgaben laden                                      |
-| POST | `/api/tasks` | JWT | Aufgabe anlegen                                            |
-| PUT | `/api/tasks/:id` | JWT | Aufgabe aktualisieren                                      |
-| PATCH | `/api/tasks/:id/complete` | JWT | `isDone` umschalten, setzt/löscht `doneAt`                 |
-| DELETE | `/api/tasks/:id` | JWT | Aufgabe löschen                                            |
-| GET | `/api/statistics` | JWT | erstellt Kennzahlen für die eigene Aufgabenliste           |
-| GET | `/api/users` | JWT + Rolle `admin` | Liste aller Nutzer                                         |
-| PATCH | `/api/users/:id/promote` | JWT + Rolle `admin` | setzt `role` eines Nutzers auf `admin`                     |
+| Methode | Endpunkt | Auth | Beschreibung                                          |
+|---|---|---|-------------------------------------------------------|
+| GET | `/health` | – | Health-Check                                          |
+| GET | `/health/db` | – | DB-Verbindung prüfen                                  |
+| POST | `/api/auth/register` | – | Account anlegen, gibt `{ token, email, role }` zurück |
+| POST | `/api/auth/login` | – | Anmelden, gibt `{ token, email, role }` zurück        |
+| POST | `/api/auth/logout` | – | Bestätigt Logout                                      |
+| POST | `/api/auth/request-reset` | – | Erzeugt Reset-Token für die angegebene E-Mail, `404` falls nicht vorhanden |
+| POST | `/api/auth/reset-password` | – | Setzt das Password des Nutzers zurück                 |
+| GET | `/api/tasks` | JWT | eigene Aufgaben laden                                 |
+| POST | `/api/tasks` | JWT | Aufgabe anlegen                                       |
+| PUT | `/api/tasks/:id` | JWT | Aufgabe aktualisieren                                 |
+| PATCH | `/api/tasks/:id/complete` | JWT | `isDone` umschalten, setzt/löscht `doneAt`            |
+| DELETE | `/api/tasks/:id` | JWT | Aufgabe löschen                                       |
+| GET | `/api/statistics` | JWT | erstellt Kennzahlen für die eigene Aufgabenliste      |
+| GET | `/api/users` | JWT + Rolle `admin` | Liste aller Nutzer                                    |
+| PATCH | `/api/users/:id/promote` | JWT + Rolle `admin` | setzt `role` eines Nutzers auf `admin`                |
+| PATCH | `/api/users/:id/demote` | JWT + Rolle `admin` | setzt `role` eines Nutzers auf `user`                 |
+| DELETE | `/api/users/:id` | JWT + Rolle `admin` | löscht einen Nutzer                                   |
 
 
 ## Sicherheitsaspekte (aktueller Stand)

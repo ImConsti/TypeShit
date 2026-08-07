@@ -59,10 +59,25 @@ npm run dev
 
 ## Endpoints
 
-| Method | Path | Description |
-|---|---|---|
-| GET | `/health` | Server health check |
-| GET | `/health/db` | Database connection check |
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/health` | – | Server health check |
+| GET | `/health/db` | – | Database connection check |
+| POST | `/api/auth/register` | – | Create account, returns `{ token, email, role }` |
+| POST | `/api/auth/login` | – | Log in, returns `{ token, email, role }` |
+| POST | `/api/auth/logout` | – | Confirms logout |
+| POST | `/api/auth/request-reset` | – | Generates a reset token for the given email |
+| POST | `/api/auth/reset-password` | – | Resets the password using a valid reset token |
+| GET | `/api/tasks` | JWT | Load the authenticated user's tasks |
+| POST | `/api/tasks` | JWT | Create a task |
+| PUT | `/api/tasks/:id` | JWT | Update a task |
+| PATCH | `/api/tasks/:id/complete` | JWT | Toggle `isDone`, sets/clears `doneAt` |
+| DELETE | `/api/tasks/:id` | JWT | Delete a task |
+| GET | `/api/statistics` | JWT | Aggregated stats for the authenticated user's tasks |
+| GET | `/api/users` | JWT + role `admin` | List all users |
+| PATCH | `/api/users/:id/promote` | JWT + role `admin` | Set a user's role to `admin` |
+| PATCH | `/api/users/:id/demote` | JWT + role `admin` | Set a user's role to `user` |
+| DELETE | `/api/users/:id` | JWT + role `admin` | Delete a user |
 
 ## Adding database tables
 
