@@ -106,3 +106,38 @@
   border-color: #ff9999;
   color: var(--danger-color);
 }
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.demoteBtn {
+  background-color: var(--surface-color);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  margin-right: 8px;
+}
+
+.demoteBtn:hover {
+  background-color: var(--background-color);
+  border-color: var(--primary-color);
+}
+
+.deleteBtn {
+  background-color: transparent;
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+}
+
+.deleteBtn:hover {
+  background-color: var(--danger-color);
+  color: var(--surface-color);
+}

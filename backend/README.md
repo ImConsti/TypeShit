@@ -1,6 +1,6 @@
 # Backend
 
-> ERSTELLT MIT CLAUDE!!!
+> DIESE README IST ERSTELLT MIT CLAUDE!!!
 
 Express 5 REST API written in TypeScript, using Drizzle ORM over standard Postgres (`pg`/node-postgres).
 In production this connects to [Neon](https://neon.tech/) (serverless Postgres); for local development

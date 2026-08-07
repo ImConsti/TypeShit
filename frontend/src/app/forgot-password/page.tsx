@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/src/contexts/AuthContext';
 import styles from '@/src/app/login/login.module.css';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  const { resetPassword } = useAuth();
+  const router = useRouter();
+  const { requestReset } = useAuth();
 
   const onReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,15 +20,13 @@ export default function ForgotPasswordPage() {
       setErrorMessage('Bitte eine E-Mail-Adresse eingeben.');
       return;
     }
-
+    
     setErrorMessage('');
-    setMessage('');
     setIsLoading(true);
 
     try {
-      await resetPassword(email);
-      setMessage('Ein Link zum Zurücksetzen wurde an deine E-Mail gesendet.');
-      setEmail('');
+      const token = await requestReset(email);
+      router.push(`/reset-password?token=${token}`);
     } catch (err: any) {
       setErrorMessage(err.message || 'Ein Fehler ist aufgetreten.');
     } finally {
@@ -59,23 +57,19 @@ export default function ForgotPasswordPage() {
           </div>
         )}
 
-        {message && (
-          <div className={styles.errorMessage} style={{ marginTop: '1rem', color: 'green', backgroundColor: '#e6ffe6', borderColor: '#99ff99' }}>
-            {message}
-          </div>
-        )}
-
         <button 
           type="submit" 
           disabled={!email || isLoading} 
           className={styles.btnPrimary} 
           style={{ marginTop: '1rem', width: '100%' }}
         >
-          {isLoading ? 'Sende Link...' : 'Link anfordern'}
+          {isLoading ? 'Pruefe...' : 'Passwort zurücksetzen'}
         </button>
         
       </form>
+      
       <hr style={{ margin: '1.5rem 0', border: 'none', borderTop: '1px solid var(--border-color)' }} />
+      
       <div className={styles.links}>
         <Link href="/login">Zurück zum Login</Link>
       </div>
