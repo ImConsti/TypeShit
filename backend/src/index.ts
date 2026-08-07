@@ -460,7 +460,7 @@ app.patch('/api/users/:id/promote', authenticateToken, async (req: AuthRequest, 
     }
     const id = Number(req.params.id);
     await db.update(users).set({ role: 'admin' }).where(eq(users.id, id));
-    res.json({ message: `User mit ID ${id} wurde zum Admin befoerdert.` });
+    res.json({ message: `User mit ID ${id} wurde zum Admin befördert.` });
   } catch (error) {
     res.status(500).json({ error: 'Befoerderung fehlgeschlagen' });
   }
@@ -486,9 +486,9 @@ app.delete('/api/users/:id', authenticateToken, async (req: AuthRequest, res: ex
     }
     const id = Number(req.params.id);
     await db.delete(users).where(eq(users.id, id));
-    res.json({ message: `User mit ID ${id} wurde geloescht.` });
+    res.json({ message: `User mit ID ${id} wurde gelöscht.` });
   } catch (error) {
-    res.status(500).json({ error: 'Loeschen fehlgeschlagen' });
+    res.status(500).json({ error: 'Löschen fehlgeschlagen' });
   }
 });
 
