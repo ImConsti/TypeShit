@@ -459,6 +459,32 @@ app.patch('/api/users/:id/promote', authenticateToken, async (req: AuthRequest, 
   }
 });
 
+app.patch('/api/users/:id/demote', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ error: 'Zugriff verweigert' });
+    }
+    const id = Number(req.params.id);
+    await db.update(users).set({ role: 'user' }).where(eq(users.id, id));
+    res.json({ message: `User mit ID ${id} wurde degradiert.` });
+  } catch (error) {
+    res.status(500).json({ error: 'Degradierung fehlgeschlagen' });
+  }
+});
+
+app.delete('/api/users/:id', authenticateToken, async (req: AuthRequest, res: express.Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ error: 'Zugriff verweigert' });
+    }
+    const id = Number(req.params.id);
+    await db.delete(users).where(eq(users.id, id));
+    res.json({ message: `User mit ID ${id} wurde geloescht.` });
+  } catch (error) {
+    res.status(500).json({ error: 'Loeschen fehlgeschlagen' });
+  }
+});
+
 app.get('/api/users', authenticateToken, async (req: AuthRequest, res: express.Response) => {
   try {
     if (req.user!.role !== 'admin') {
