@@ -25,7 +25,7 @@ export default function StatisticsRoute() {
       try {
         // The login flow stores the JWT under this key. It is required because
         // /api/statistics is protected by authenticateToken.
-        const token = localStorage.getItem('auth_token');
+        const token = sessionStorage.getItem('auth_token');
 
         if (!token) {
           throw new Error(

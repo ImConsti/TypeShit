@@ -142,21 +142,21 @@ export default function AdminPage() {
                   </span>
                 </td>
                 <td style={{ padding: '0.5rem' }}>
-                  {u.role === 'admin' && (
-                    <button 
-                      onClick={() => handleDemote(u.id)}
-                      style={{ marginRight: '8px', padding: '0.3rem 0.6rem', cursor: 'pointer' }}
-                    >
-                      Rechte entziehen
-                    </button>
-                  )}
+                {u.role === 'admin' && (
                   <button 
-                    onClick={() => handleDelete(u.id)}
-                    style={{ padding: '0.3rem 0.6rem', cursor: 'pointer', backgroundColor: '#ffebee', border: '1px solid #c62828', color: '#c62828' }}
+                    className={`${styles.actionBtn} ${styles.demoteBtn}`}
+                    onClick={() => handleDemote(u.id)}
                   >
-                    Loeschen
+                    Rechte entziehen
                   </button>
-                </td>
+                )}
+                <button 
+                  className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                  onClick={() => handleDelete(u.id)}
+                >
+                  Löschen
+                </button>
+              </td>
               </tr>
             ))}
           </tbody>

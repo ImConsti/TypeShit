@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
           className={styles.btnPrimary} 
           style={{ marginTop: '1rem', width: '100%' }}
         >
-          {isLoading ? 'Pruefe...' : 'Passwort zuruecksetzen'}
+          {isLoading ? 'Pruefe...' : 'Passwort zurücksetzen'}
         </button>
         
       </form>
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
       <hr style={{ margin: '1.5rem 0', border: 'none', borderTop: '1px solid var(--border-color)' }} />
       
       <div className={styles.links}>
-        <Link href="/login">Zurueck zum Login</Link>
+        <Link href="/login">Zurück zum Login</Link>
       </div>
     </div>
   );

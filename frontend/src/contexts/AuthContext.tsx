@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -13,7 +13,7 @@ interface AuthContextType {
   logout: () => void;
   register: (email: string, pass: string) => Promise<void>;
   requestReset: (email: string) => Promise<string>;
- resetPassword: (token: string, newPassword: string) => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,18 +23,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState<string | null>(null);
   const [role, setRole] = useState<'user' | 'admin' | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    const storedEmail = localStorage.getItem('user_email');
-    const storedRole = localStorage.getItem('user_role') as 'user' | 'admin' | null;
-    
+    const token = sessionStorage.getItem('auth_token');
+    const storedEmail = sessionStorage.getItem('user_email');
+    const storedRole = sessionStorage.getItem('user_role') as 'user' | 'admin' | null;
+
     if (token) {
       setIsAuthenticated(true);
       setEmail(storedEmail);
       setRole(storedRole);
+    } else {
+      const publicRoutes = ['/login', '/register', '/forgot-password', '/reset-password'];
+      if (!publicRoutes.includes(pathname)) {
+        router.push('/login');
+      }
     }
-  }, []);
+  }, [pathname, router]);
 
   const login = async (emailInput: string, passwordInput: string) => {
     const response = await fetch(`${API_BASE}/api/auth/login`, {
@@ -49,10 +55,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(data.error || 'Login fehlgeschlagen');
     }
 
-    localStorage.setItem('auth_token', data.token);
-    localStorage.setItem('user_email', data.email);
-    // Rolle hier aus Token oder Response extrahieren
-    localStorage.setItem('user_role', data.role || 'user');
+    sessionStorage.setItem('auth_token', data.token);
+    sessionStorage.setItem('user_email', data.email);
+    sessionStorage.setItem('user_role', data.role || 'user');
 
     setIsAuthenticated(true);
     setEmail(data.email);
@@ -73,9 +78,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(data.error || 'Registrierung fehlgeschlagen');
     }
 
-    localStorage.setItem('auth_token', data.token);
-    localStorage.setItem('user_email', data.email);
-    localStorage.setItem('user_role', 'user');
+    sessionStorage.setItem('auth_token', data.token);
+    sessionStorage.setItem('user_email', data.email);
+    sessionStorage.setItem('user_role', 'user');
 
     setIsAuthenticated(true);
     setEmail(data.email);
@@ -89,13 +94,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: emailInput }),
     });
-    
+
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error(data.error || 'Anfrage fehlgeschlagen');
     }
-    
+
     return data.token;
   };
 
@@ -105,9 +110,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, newPassword: newPasswordInput }),
     });
-    
+
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error(data.error || 'Passwort-Reset fehlgeschlagen');
     }
@@ -116,13 +121,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     await fetch(`${API_BASE}/api/auth/logout`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      headers: { 'Authorization': `Bearer ${sessionStorage.getItem('auth_token')}` }
     });
 
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_email');
-    localStorage.removeItem('user_role');
-    
+    sessionStorage.removeItem('auth_token');
+    sessionStorage.removeItem('user_email');
+    sessionStorage.removeItem('user_role');
+
     setIsAuthenticated(false);
     setEmail(null);
     setRole(null);

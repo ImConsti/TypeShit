@@ -1,7 +1,7 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export const promoteUser = async (userId: number) => {
-  const token = localStorage.getItem('auth_token');
+  const token = sessionStorage.getItem('auth_token');
   const response = await fetch(`${API_BASE}/api/users/${userId}/promote`, {
     method: 'PATCH',
     headers: {
@@ -18,7 +18,7 @@ export const promoteUser = async (userId: number) => {
 };
 
 export const fetchUsers = async () => {
-  const token = localStorage.getItem('auth_token');
+  const token = sessionStorage.getItem('auth_token');
   const response = await fetch(`${API_BASE}/api/users`, {
     method: 'GET',
     headers: {
@@ -36,7 +36,7 @@ export const fetchUsers = async () => {
 };
 
 export const demoteUser = async (userId: number) => {
-  const token = localStorage.getItem('auth_token');
+  const token = sessionStorage.getItem('auth_token');
   const response = await fetch(`${API_BASE}/api/users/${userId}/demote`, {
     method: 'PATCH',
     headers: {
@@ -53,7 +53,7 @@ export const demoteUser = async (userId: number) => {
 };
 
 export const deleteUser = async (userId: number) => {
-  const token = localStorage.getItem('auth_token');
+  const token = sessionStorage.getItem('auth_token');
   const response = await fetch(`${API_BASE}/api/users/${userId}`, {
     method: 'DELETE',
     headers: {
